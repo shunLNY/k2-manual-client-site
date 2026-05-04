@@ -1,0 +1,180 @@
+.header {
+  display: flex;
+  align-items: center;
+  padding: 16px 40px;
+  background-color: var(--theme-bg-header);
+  border-bottom: 1px solid var(--color-gray-200);
+  gap: 32px;
+  font-family: sans-serif;
+  /* justify-content: space-between; */
+}
+
+.iconButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #3b82f6;
+  border-radius: 4px;
+  background-color: transparent;
+  color: #3b82f6;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logoIcon {
+  width: 32px;
+  height: 32px;
+  color: var(--theme-text-main);
+}
+
+.logoText {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--theme-text-main);
+  letter-spacing: 1px;
+}
+
+.navContainer {
+  display: flex;
+  gap: 12px;
+  margin-left: 6rem;
+}
+
+.navButton {
+  background-color: #3b82f6;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.navButton:hover {
+  background-color: #2563eb;
+}
+
+/* Nav Container ကို ညာဘက်ရောက်အောင် ပြင်ဆင်ခြင်း */
+.navContainer {
+  display: flex;
+  gap: 12px;
+  margin-left: 7rem;
+}
+
+/* Hamburger Button အသစ် (Desktop မှာ ဖျောက်ထားမည်) */
+.hamburgerBtn {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--theme-text-main);
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Sidebar Menu Design */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -300px; /* ပုံမှန်ဆို ဘေးမှာ ပုန်းနေပါမယ် */
+  width: 280px;
+  height: 100vh;
+  background-color: #26293d; /* ပုံထဲကအရောင်နဲ့ ဆင်တူအောင် ထည့်ထားပါတယ် */
+  color: white;
+  transition: left 0.3s ease-in-out;
+  z-index: 1000;
+  padding: 24px;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.sidebarOpen {
+  left: 0; /* Menu ဖွင့်ရင် ဘယ်ဘက်ကို ထွက်လာပါမယ် */
+}
+
+.sidebarHeader {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 32px;
+}
+
+.closeBtn {
+  background: transparent;
+  border: 1px solid #ffffff50;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebarTitle {
+  font-size: 20px;
+  margin-bottom: 24px;
+  font-weight: bold;
+}
+
+.categoryList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.categoryList li {
+  padding: 14px 0;
+  font-size: 16px;
+  color: #c4c4d4;
+  cursor: pointer;
+  border-bottom: 1px solid transparent;
+}
+
+.categoryList li:hover {
+  color: white;
+}
+
+/* Overlay Background Design */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+/* ------------------------------------------- */
+/* Mobile Screen (Tablet & Phone) */
+/* ------------------------------------------- */
+@media (max-width: 768px) {
+  .header {
+    padding: 16px 20px;
+    gap: 16px;
+    justify-content: flex-start;
+  }
+
+  .hamburgerBtn {
+    display: block;
+  }
+
+  .logoText {
+    display: none;
+  }
+
+  .navContainer {
+    margin-left: auto;
+  }
+
+  .iconButton {
+    display: none;
+  }
+}

@@ -1,0 +1,180 @@
+/** @format */
+@use "../../styles/variables.scss" as *;
+// ****************
+@use "../../styles/functions" as fn;
+@use "../../styles/mixins" as mixin;
+@use "sass:color";
+
+/* ------------------------------------------- */
+/* Header Styles                               */
+/* ------------------------------------------- */
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: fn.rem(16) fn.rem(40);
+  background-color: var(--header-background);
+  border-bottom: 1px solid var(--header-border);
+  gap: fn.rem(32);
+  font-family: var(--font-sans, sans-serif);
+
+  @include mixin.sm() {
+    padding: fn.rem(16) fn.rem(20);
+    gap: fn.rem(16);
+    justify-content: flex-start;
+  }
+}
+
+.iconButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: fn.rem(36);
+  height: fn.rem(36);
+  border: 1px solid var(--primary);
+  border-radius: fn.rem(4);
+  background-color: transparent;
+  color: var(--primary);
+  cursor: pointer;
+  margin-left: auto;
+
+  @include mixin.sm() {
+    display: none;
+  }
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+  gap: fn.rem(12);
+}
+
+.logoIcon {
+  width: fn.rem(32);
+  height: fn.rem(32);
+  color: var(--foreground);
+}
+
+.logoText {
+  font-size: fn.rem(20);
+  font-weight: bold;
+  color: var(--foreground);
+  letter-spacing: fn.rem(1);
+
+  @include mixin.sm() {
+    display: none;
+  }
+}
+
+.navContainer {
+  display: flex;
+  gap: fn.rem(12);
+  margin-left: fn.rem(112);
+
+  @include mixin.sm() {
+    margin-left: auto;
+  }
+}
+
+.navButton {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  border: none;
+  border-radius: fn.rem(4);
+  padding: fn.rem(8) fn.rem(16);
+  font-size: fn.rem(14);
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: var(--sidebar-ring, #2563eb);
+  }
+}
+
+.hamburgerBtn {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--foreground);
+  cursor: pointer;
+  padding: 0;
+
+  @include mixin.sm() {
+    display: block;
+  }
+}
+
+/* ------------------------------------------- */
+/* Sidebar and Overlay                   */
+/* ------------------------------------------- */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: fn.rem(-300);
+  width: fn.rem(280);
+  height: 100vh;
+  background-color: var(--sidebar-primary-background);
+  color: var(--sidebar-primary-foreground);
+  transition: left 0.3s ease-in-out;
+  z-index: 1000;
+  padding: fn.rem(24);
+  box-shadow: fn.rem(4) 0 fn.rem(10) rgba(0, 0, 0, 0.3);
+
+  &.sidebarOpen {
+    left: 0;
+  }
+}
+
+.sidebarHeader {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: fn.rem(32);
+}
+
+.closeBtn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: fn.rem(4);
+  color: inherit;
+  cursor: pointer;
+  padding: fn.rem(6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebarTitle {
+  font-size: fn.rem(20);
+  margin-bottom: fn.rem(24);
+  font-weight: bold;
+}
+
+.categoryList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    padding: fn.rem(14) 0;
+    font-size: fn.rem(16);
+    color: var(--muted-foreground);
+    cursor: pointer;
+    border-bottom: 1px solid transparent;
+    transition: color 0.2s;
+
+    &:hover {
+      color: var(--foreground);
+    }
+  }
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}

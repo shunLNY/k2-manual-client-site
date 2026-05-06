@@ -1,12 +1,12 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import styles from "./SearchSection.module.css";
+import styles from "./SearchSection.module.scss";
 
 export default function SearchSection() {
   return (
     <div className={styles.container}>
-      <h1 className={styles.heading}>お困りごとはなんですか？</h1>
+      <h1 className={styles.heading}>御困りごとはなんですか？</h1>
       <div className={styles.inputWrapper}>
         <span className={styles.icon}>
           <FontAwesomeIcon icon={faMagnifyingGlass} />

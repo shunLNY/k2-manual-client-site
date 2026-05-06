@@ -1,0 +1,89 @@
+@use "../../styles/variables.scss" as *;
+@use "../../styles/functions" as fn;
+@use "../../styles/mixins" as mixin;
+
+.sidebar {
+  width: fn.rem(256);
+  background-color: var(--sidebar);
+  border-right: 1px solid var(--sidebar-border);
+  padding: fn.rem(40) fn.rem(24);
+
+  /* Desktop အတွက် အမြဲပေါ်နေစေမည် */
+  display: block;
+
+  /* Mobile/Tablet ရောက်မှသာ Fixed ပုံစံပြောင်းပြီး ဘေးသို့ ဝှက်ထားမည် */
+  @include mixin.sm() {
+    position: fixed;
+    top: 0;
+    left: fn.rem(-300); /* မြင်ကွင်းအပြင်ဘက်သို့ ရွှေ့ထားခြင်း */
+    height: 100vh;
+    z-index: 1000;
+    transition: left 0.3s ease; /* ပွင့်လာလျှင် ညင်သာစွာ ထွက်လာစေရန် */
+    background-color: var(--sidebar-primary-background);
+    padding-top: fn.rem(80);
+
+    /* Open ဖြစ်သည့်အခါ မြင်ကွင်းထဲ ပြန်ဝင်လာစေရန် */
+    &.isOpen {
+      left: 0;
+    }
+  }
+}
+
+.closeBtn {
+  display: none; /* Desktop တွင် ဖျောက်ထားမည် */
+
+  @include mixin.sm() {
+    display: block;
+    position: absolute;
+    top: fn.rem(20);
+    right: fn.rem(20);
+    background: transparent;
+    border: none;
+    color: var(--sidebar-primary-foreground);
+    cursor: pointer;
+  }
+}
+
+.section {
+  margin-bottom: fn.rem(32);
+}
+
+.title {
+  font-weight: 700;
+  color: var(--foreground);
+  margin-bottom: fn.rem(16);
+  font-size: fn.rem(14);
+
+  @include mixin.sm() {
+    color: var(--sidebar-primary-foreground);
+  }
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.listItem {
+  font-size: fn.rem(14);
+  color: var(--muted-foreground);
+  cursor: pointer;
+  margin-bottom: fn.rem(8);
+  transition: color 0.2s ease;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &:hover {
+    color: var(--foreground);
+  }
+
+  @include mixin.sm() {
+    color: #999fc0; /* Mobile Menu အတွက် ခပ်ဖျော့ဖျော့ အရောင် */
+    &:hover {
+      color: #ffffff;
+    }
+  }
+}

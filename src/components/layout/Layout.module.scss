@@ -15,7 +15,7 @@
 
 .mainContent {
   flex: 1;
-  padding: fn.rem(60) 0;
+  padding: fn.rem(50) 0 fn.rem(60);
   background-color: var(--background);
 
   @include mixin.sm() {
@@ -36,17 +36,3 @@
     display: none;
   }
 }
-
-/* .container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background-color: var(--theme-bg-main);
-}
-.bodyWrapper {
-  display: flex;
-  flex: 1;
-}
-.mainContent {
-  flex: 1;
-} */

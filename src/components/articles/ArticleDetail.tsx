@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import styles from "./ArticleDetail.module.scss";
 import image from "../../../public/images/unsplash.png";
+// import contractimage from "../../../public/images/credit_contract.png";
 
 export default function ArticleDetail() {
   const mockSummernoteHTML = `
@@ -13,7 +14,7 @@ export default function ArticleDetail() {
     <ol>
       <li>
         ご契約内容画面にある「プラン変更」をクリックし、プラン詳細画面に移動します。
-        <img src="https://via.placeholder.com/800x400/3b3c54/ffffff?text=System+Screenshot" alt="Step 1 Screenshot" />
+        <img src="../images/credit_contract.png" alt="Step 1 Screenshot" />
       </li>
       <li>
         変更したいプランを選択し、「ご契約画面へ進む」をクリックします。
@@ -34,34 +35,30 @@ export default function ArticleDetail() {
 
       {/* 3. Hero Image */}
       <div className={styles.heroImageWrapper}>
-        {/* <Image
-          src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?q=80&w=2070&auto=format&fit=crop"
-          alt="System Admin Guide"
-          fill
-          priority
-        /> */}
         <Image src={image} alt="" className={styles.image} />
       </div>
 
-      {/* 4. Summary Box */}
-      <div className={styles.summarySection}>
-        <div className={styles.summaryLeft}>
-          <div className={styles.summaryLabel}>この記事では</div>
-          <div className={styles.summaryText}>
-            この記事はテストです。テストです。テストです。テストです。テストです。テストです。テストです。テストです。テストです。テストです。テストです。テストです。テストです。テストです。テストです。テストです。テストです。テストです。テストです。
+      <div className={styles.bgcolor}>
+        {/* 4. Summary Box */}
+        <div className={styles.summarySection}>
+          <div className={styles.summaryLeft}>
+            <div className={styles.summaryLabel}>この記事では</div>
+            <div className={styles.summaryText}>
+              この記事はテストです。テストです。テストです。テストです。テストです。テストです。テストです。テストです。テストです。テストです。テストです。テストです。テストです。テストです。テストです。テストです。テストです。テストです。テストです。
+            </div>
+          </div>
+          <div className={styles.summaryRight}>
+            <div className={styles.summaryLabel}>カテゴリー</div>
+            <div className={styles.tag}>リリース</div>
           </div>
         </div>
-        <div className={styles.summaryRight}>
-          <div className={styles.summaryLabel}>カテゴリー</div>
-          <div className={styles.tag}>リリース</div>
-        </div>
-      </div>
 
-      {/* 5. SummerNote Rich Text Content */}
-      <div
-        className={styles.summernoteContent}
-        dangerouslySetInnerHTML={{ __html: mockSummernoteHTML }}
-      />
+        {/* 5. SummerNote Rich Text Content */}
+        <div
+          className={styles.summernoteContent}
+          dangerouslySetInnerHTML={{ __html: mockSummernoteHTML }}
+        />
+      </div>
     </div>
   );
 }

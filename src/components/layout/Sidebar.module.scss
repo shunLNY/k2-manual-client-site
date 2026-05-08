@@ -4,25 +4,21 @@
 
 .sidebar {
   width: fn.rem(256);
-  background-color: var(--sidebar);
+  background-color: var(--background);
   border-right: 1px solid var(--sidebar-border);
   padding: fn.rem(40) fn.rem(24);
-
-  /* Desktop အတွက် အမြဲပေါ်နေစေမည် */
   display: block;
 
-  /* Mobile/Tablet ရောက်မှသာ Fixed ပုံစံပြောင်းပြီး ဘေးသို့ ဝှက်ထားမည် */
   @include mixin.sm() {
     position: fixed;
     top: 0;
-    left: fn.rem(-300); /* မြင်ကွင်းအပြင်ဘက်သို့ ရွှေ့ထားခြင်း */
+    left: fn.rem(-300);
     height: 100vh;
     z-index: 1000;
-    transition: left 0.3s ease; /* ပွင့်လာလျှင် ညင်သာစွာ ထွက်လာစေရန် */
+    transition: left 0.3s ease;
     background-color: var(--sidebar-primary-background);
     padding-top: fn.rem(80);
 
-    /* Open ဖြစ်သည့်အခါ မြင်ကွင်းထဲ ပြန်ဝင်လာစေရန် */
     &.isOpen {
       left: 0;
     }
@@ -30,7 +26,7 @@
 }
 
 .closeBtn {
-  display: none; /* Desktop တွင် ဖျောက်ထားမည် */
+  display: none;
 
   @include mixin.sm() {
     display: block;
@@ -81,9 +77,41 @@
   }
 
   @include mixin.sm() {
-    color: #999fc0; /* Mobile Menu အတွက် ခပ်ဖျော့ဖျော့ အရောင် */
+    color: #999fc0;
     &:hover {
       color: #ffffff;
     }
+  }
+}
+
+/* Search Box */
+.searchContainer {
+  position: relative;
+  margin-bottom: fn.rem(32);
+}
+
+.searchIcon {
+  position: absolute;
+  left: fn.rem(12);
+  top: 50%;
+  transform: translateY(-50%);
+  width: fn.rem(16);
+  height: fn.rem(16);
+  color: var(--muted-foreground);
+}
+
+.searchInput {
+  width: 100%;
+  padding: fn.rem(8) fn.rem(12) fn.rem(8) fn.rem(36);
+  border: 1px solid var(--border);
+  border-radius: fn.rem(4);
+  background-color: var(--input-background, #ffffff);
+  color: var(--foreground);
+  font-size: fn.rem(14);
+  outline: none;
+  transition: border-color 0.2s;
+
+  &:focus {
+    border-color: var(--primary);
   }
 }

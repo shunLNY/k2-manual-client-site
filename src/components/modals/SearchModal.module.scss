@@ -1,0 +1,138 @@
+/** @format */
+@use "../../styles/variables.scss" as *;
+@use "../../styles/functions" as fn;
+@use "../../styles/mixins" as mixin;
+
+/* 1. Overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--overlay-background);
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: fn.rem(100);
+  overflow-y: auto;
+}
+
+.modal {
+  background-color: var(--background);
+  width: fn.rem(600);
+  max-width: 90%;
+  border-radius: fn.rem(12);
+  box-shadow: 0 fn.rem(10) fn.rem(30) rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  text-align: left;
+}
+
+/* 3. Modal Header (Input + Dropdown) */
+.header {
+  padding: fn.rem(24) 0 0;
+  margin: 0 fn.rem(24) 0;
+  border-bottom: 1px solid var(--border);
+  align-items: center;
+  gap: fn.rem(16);
+}
+
+.modalSearchContainer {
+  position: relative;
+  flex: 1;
+}
+
+.modalSearchIcon {
+  position: absolute;
+  left: fn.rem(16);
+  top: 50%;
+  transform: translateY(-50%);
+  width: fn.rem(18);
+  height: fn.rem(18);
+  stroke: var(--foreground);
+  stroke-width: 2;
+}
+
+.modalSearchInput {
+  width: 100%;
+  padding: fn.rem(8) fn.rem(16) fn.rem(8) fn.rem(48);
+  border: 1px solid var(--border);
+  border-radius: fn.rem(8);
+  background-color: var(--input-background, #ffffff);
+  color: var(--foreground);
+  font-size: fn.rem(16);
+  outline: none;
+
+  &:focus {
+    border-color: var(--primary);
+  }
+}
+
+.categoriesButton {
+  display: flex;
+  align-items: center;
+  gap: fn.rem(8);
+  padding: fn.rem(10) fn.rem(16);
+  background-color: transparent;
+  border: 1px solid var(--border);
+  border-radius: fn.rem(30);
+  cursor: pointer;
+  margin: fn.rem(22) 0 0 auto;
+
+  span {
+    font-size: fn.rem(14);
+    color: var(--foreground);
+  }
+
+  svg {
+    width: fn.rem(16);
+    height: fn.rem(16);
+    stroke: var(--muted-foreground);
+    stroke-width: 2;
+  }
+}
+
+/* 4. Modal Body (Results Area) */
+.resultsBody {
+  padding: fn.rem(24);
+  color: var(--foreground);
+}
+
+.resultsStats {
+  font-size: fn.rem(14);
+  margin-bottom: fn.rem(15);
+}
+
+.resultsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* 5. Result Item */
+.resultItem {
+  margin-bottom: fn.rem(24);
+  padding-bottom: fn.rem(24);
+  border-bottom: 1px solid var(--border);
+
+  &:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+}
+
+.resultTitle {
+  font-size: fn.rem(16);
+  font-weight: bold;
+  margin-bottom: fn.rem(12);
+}
+
+.resultDescription {
+  font-size: fn.rem(12);
+  color: var(--muted-foreground);
+  line-height: 1.6;
+}

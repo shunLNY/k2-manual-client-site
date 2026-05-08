@@ -14,11 +14,10 @@ export default function TopicCard({ topic }: TopicCardProps) {
       <div style={{ position: "relative", width: "100%", height: "150px" }}>
         <Image
           src={card}
-          // src={topic.imageUrl}
           alt={topic.title}
-          fill // Container အပြည့် ဖြစ်စေရန်
-          style={{ objectFit: "cover" }} // CSS Module ထဲမှာလည်း ရေးနိုင်သည်
-          sizes="(max-width: 768px) 100vw, 33vw" // Responsive ဖြစ်စေရန်
+          fill
+          style={{ objectFit: "cover" }}
+          sizes="(max-width: 768px) 100vw, 33vw"
         />
       </div>
       <div className={styles.cardcontent}>

@@ -12,7 +12,7 @@
 .header {
   display: flex;
   align-items: center;
-  padding: fn.rem(16) fn.rem(40);
+  padding: fn.rem(16) fn.rem(24);
   background-color: var(--header-background);
   border-bottom: 1px solid var(--header-border);
   gap: fn.rem(32);
@@ -44,6 +44,7 @@
 }
 
 .logoContainer {
+  color: var(--foreground);
   display: flex;
   align-items: center;
   gap: fn.rem(12);
@@ -58,7 +59,6 @@
 .logoText {
   font-size: fn.rem(20);
   font-weight: bold;
-  color: var(--foreground);
   letter-spacing: fn.rem(1);
 
   @include mixin.sm() {
@@ -69,7 +69,7 @@
 .navContainer {
   display: flex;
   gap: fn.rem(12);
-  margin-left: fn.rem(112);
+  margin-left: fn.rem(96);
 
   @include mixin.sm() {
     margin-left: auto;

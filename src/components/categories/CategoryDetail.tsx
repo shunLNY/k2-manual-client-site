@@ -1,63 +1,24 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import styles from "./CategoryDetail.module.scss";
 
-interface ListItemData {
+interface DBCategoryNode {
   id: string;
-  label: string;
-  isBold?: boolean;
-  articleId?: string;
-  children?: ListItemData[];
+  category_name: string;
+  category_slug: string;
+  parent_category_id: string | null;
+  sort_order: number;
+  status: string;
+  children?: DBCategoryNode[];
 }
 
-const listData: ListItemData[] = [
-  {
-    id: "1",
-    label: "Sub Category 1",
-    isBold: true,
-    children: [
-      { id: "1-1", label: "システム管理者ができること", articleId: "001" },
-      { id: "1-2", label: "記事 2", articleId: "002" },
-      {
-        id: "1-3",
-        label: "子カテゴリー001",
-        isBold: true,
-        children: [
-          { id: "1-3-1", label: "記事 2", articleId: "003" },
-          { id: "1-3-2", label: "記事 3", articleId: "004" },
-        ],
-      },
-    ],
-  },
-  {
-    id: "2",
-    label: "編集者ができること",
-  },
-  {
-    id: "3",
-    label: "Sub Category 2",
-    isBold: true,
-    children: [
-      { id: "3-1", label: "システム管理者ができること" },
-      { id: "3-2", label: "記事 2" },
-      {
-        id: "3-3",
-        label: "子カテゴリー001",
-        isBold: true,
-        children: [
-          { id: "3-3-1", label: "記事 2" },
-          { id: "3-3-2", label: "記事 3" },
-        ],
-      },
-    ],
-  },
-  {
-    id: "4",
-    label: "編集者ができること",
-  },
-];
+const TreeItem: React.FC<{ item: DBCategoryNode; level: number }> = ({ item, level }) => {
+  const isSubCategory = level === 2;
+  const isArticle = level >= 3 || (!item.children || item.children.length === 0 && level > 2);
 
-const TreeItem: React.FC<{ item: ListItemData }> = ({ item }) => {
   return (
     <li className={styles.listItem}>
       <svg
@@ -70,20 +31,20 @@ const TreeItem: React.FC<{ item: ListItemData }> = ({ item }) => {
       </svg>
 
       <div className={styles.itemContent}>
-        <div className={item.isBold ? styles.boldText : ""}>
-          {!item.children || item.children.length === 0 ? (
+        <div className={isSubCategory ? styles.boldText : ""}>
+          {isArticle ? (
             <Link href={`/article/${item.id}`} className={styles.articleLink}>
-              {item.label}
+              {item.category_name}
             </Link>
           ) : (
-            item.label
+            <span>{item.category_name}</span>
           )}
         </div>
 
         {item.children && item.children.length > 0 && (
           <ul className={`${styles.treeList} ${styles.nestedList}`}>
             {item.children.map((child) => (
-              <TreeItem key={child.id} item={child} />
+              <TreeItem key={child.id} item={child} level={level + 1} />
             ))}
           </ul>
         )}
@@ -92,27 +53,81 @@ const TreeItem: React.FC<{ item: ListItemData }> = ({ item }) => {
   );
 };
 
-const CategoryDetail: React.FC = () => {
+export default function CategoryDetail() {
+  const router = useRouter();
+  const { id } = router.query;
+
+  const [targetCategory, setTargetCategory] = useState<DBCategoryNode | null>(null);
+  const [parentName, setParentName] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+
+  const findCategoryById = (nodes: DBCategoryNode[], targetId: string): DBCategoryNode | null => {
+    for (const node of nodes) {
+      if (node.id === targetId) return node;
+      if (node.children && node.children.length > 0) {
+        const found = findCategoryById(node.children, targetId);
+        if (found) return found;
+      }
+    }
+    return null;
+  };
+
+  useEffect(() => {
+    if (!id) return;
+
+    fetch("http://localhost:4000/admin/categories")
+      .then((res) => res.json())
+      .then((response) => {
+        const rawData: DBCategoryNode[] = response && response.data ? response.data : [];
+        const foundData = findCategoryById(rawData, id as string);
+
+        if (foundData) {
+          setTargetCategory(foundData);
+          const rootNode = rawData.find(root =>
+            root.id === foundData.parent_category_id ||
+            root.children?.some(child => child.id === foundData.id)
+          );
+          if (rootNode) setParentName(rootNode.category_name);
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching data:", err);
+        setLoading(false);
+      });
+  }, [id]);
+
+  if (loading) return <div className={styles.container}><p>読み込み中...</p></div>;
+  if (!targetCategory) return <div className={styles.container}><p>データが見つかりませんでした。</p></div>;
+
+  const formattedDate = new Date().toLocaleDateString("ja-JP", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
   return (
     <div className={styles.container}>
       <div className={styles.breadcrumb}>
-        Help Center &gt; 販売管理 &gt; <span>カテゴリー 3</span>
+        Help Center &gt; {parentName && `${parentName} > `} <span>{targetCategory.category_name}</span>
       </div>
 
       <div className={styles.headerArea}>
-        <h1 className={styles.title}>カテゴリー 3</h1>
-        <div className={styles.date}>更新 : 2026年4月21日</div>
+        <h1 className={styles.title}>{targetCategory.category_name}</h1>
+        <div className={styles.date}>更新 : {formattedDate}</div>
       </div>
 
       <div className={styles.contentBox}>
         <ul className={styles.treeList}>
-          {listData.map((item) => (
-            <TreeItem key={item.id} item={item} />
-          ))}
+          {targetCategory.children && targetCategory.children.length > 0 ? (
+            targetCategory.children.map((item) => (
+              <TreeItem key={item.id} item={item} level={2} />
+            ))
+          ) : (
+            <p className={styles.emptyText}>このカテゴリーには記事がありません。</p>
+          )}
         </ul>
       </div>
     </div>
   );
-};
-
-export default CategoryDetail;
+}

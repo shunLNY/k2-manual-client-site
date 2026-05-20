@@ -1,8 +1,5 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import styles from "./CategoryDetail.module.scss";
 
 interface DBCategoryNode {
@@ -21,12 +18,7 @@ const TreeItem: React.FC<{ item: DBCategoryNode; level: number }> = ({ item, lev
 
   return (
     <li className={styles.listItem}>
-      <svg
-        className={styles.icon}
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
+      <svg className={styles.icon} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="12" cy="12" r="8" />
       </svg>
 
@@ -53,59 +45,15 @@ const TreeItem: React.FC<{ item: DBCategoryNode; level: number }> = ({ item, lev
   );
 };
 
-export default function CategoryDetail() {
-  const router = useRouter();
-  const { id } = router.query;
-
-  const [targetCategory, setTargetCategory] = useState<DBCategoryNode | null>(null);
-  const [parentName, setParentName] = useState<string>("");
-  const [loading, setLoading] = useState(true);
-
-  const findCategoryById = (nodes: DBCategoryNode[], targetId: string): DBCategoryNode | null => {
-    for (const node of nodes) {
-      if (node.id === targetId) return node;
-      if (node.children && node.children.length > 0) {
-        const found = findCategoryById(node.children, targetId);
-        if (found) return found;
-      }
-    }
-    return null;
-  };
-
-  useEffect(() => {
-    if (!id) return;
-
-    fetch("http://localhost:4000/admin/categories")
-      .then((res) => res.json())
-      .then((response) => {
-        const rawData: DBCategoryNode[] = response && response.data ? response.data : [];
-        const foundData = findCategoryById(rawData, id as string);
-
-        if (foundData) {
-          setTargetCategory(foundData);
-          const rootNode = rawData.find(root =>
-            root.id === foundData.parent_category_id ||
-            root.children?.some(child => child.id === foundData.id)
-          );
-          if (rootNode) setParentName(rootNode.category_name);
-        }
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error fetching data:", err);
-        setLoading(false);
-      });
-  }, [id]);
-
-  if (loading) return <div className={styles.container}><p>読み込み中...</p></div>;
-  if (!targetCategory) return <div className={styles.container}><p>データが見つかりませんでした。</p></div>;
-
-  const formattedDate = new Date().toLocaleDateString("ja-JP", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-
+export default function CategoryDetail({
+  targetCategory,
+  parentName,
+  formattedDate,
+}: {
+  targetCategory: DBCategoryNode;
+  parentName: string;
+  formattedDate: string;
+}) {
   return (
     <div className={styles.container}>
       <div className={styles.breadcrumb}>

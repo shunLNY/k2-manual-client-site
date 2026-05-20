@@ -33,26 +33,36 @@ interface SidebarProps {
 export default function Sidebar({ isOpen = false, onClose, onSearchFocus }: SidebarProps) {
   const pathname = usePathname();
   const isHomePage = pathname === "/";
+  const [siteRootId, setSiteRootId] = useState<string | null>(null);
+  const [salesRootId, setSalesRootId] = useState<string | null>(null);
+
   const [siteChildren, setSiteChildren] = useState<SubCategory[]>([]);
   const [salesChildren, setSalesChildren] = useState<SubCategory[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:4000/admin/categories")
+    fetch("http://localhost:4000/categories")
       .then((res) => res.json())
       .then((response) => {
         const rawData: MainCategory[] = response && response.data ? response.data : (Array.isArray(response) ? response : []);
 
         const siteData = rawData.find(c => c.category_slug?.toLowerCase() === "genbakanri" || c.category_name === "現場管理");
-        if (siteData && siteData.children) {
-          const sortedSite = [...siteData.children].sort((a, b) => a.sort_order - b.sort_order);
-          setSiteChildren(sortedSite);
+        if (siteData) {
+          setSiteRootId(siteData.id);
+          if (siteData.children) {
+            const sortedSite = [...siteData.children].sort((a, b) => a.sort_order - b.sort_order);
+            setSiteChildren(sortedSite);
+          }
         }
 
+        // 販売管理 (Sales) Data
         const salesData = rawData.find(c => c.category_slug?.toLowerCase() === "hanbaikanri" || c.category_name === "販売管理");
-        if (salesData && salesData.children) {
-          const sortedSales = [...salesData.children].sort((a, b) => a.sort_order - b.sort_order);
-          setSalesChildren(sortedSales);
+        if (salesData) {
+          setSalesRootId(salesData.id);
+          if (salesData.children) {
+            const sortedSales = [...salesData.children].sort((a, b) => a.sort_order - b.sort_order);
+            setSalesChildren(sortedSales);
+          }
         }
 
         setLoading(false);
@@ -90,13 +100,24 @@ export default function Sidebar({ isOpen = false, onClose, onSearchFocus }: Side
 
       {/* 現場管理 Section */}
       <div className={styles.section}>
-        <h3 className={styles.title}>現場管理</h3>
+        <h3 className={styles.title}>
+          {siteRootId ? (
+            <Link href={`/category/${siteRootId}`} onClick={onClose} style={{ textDecoration: "none", color: "inherit" }}>
+              現場管理
+            </Link>
+          ) : (
+            "現場管理"
+          )}
+        </h3>
         <ul className={styles.list}>
           {siteChildren.length > 0 ? (
             siteChildren.map((item) => {
-              const isActive = pathname.includes(`/category/${item.id}`);
+              const isActive = pathname === `/category/${item.id}`;
               return (
-                <li key={item.id} className={`${styles.listItem} ${isActive ? styles.activeListItem : ""}`}>
+                <li
+                  key={item.id}
+                  className={`${styles.listItem} ${isActive ? styles.activeListItem : ""}`}
+                >
                   <Link href={`/category/${item.id}`} onClick={onClose} className={styles.linkItem}>
                     {item.category_name}
                   </Link>
@@ -111,7 +132,15 @@ export default function Sidebar({ isOpen = false, onClose, onSearchFocus }: Side
 
       {/* 販売管理 Section */}
       <div className={styles.section}>
-        <h3 className={styles.title}>販売管理</h3>
+        <h3 className={styles.title}>
+          {salesRootId ? (
+            <Link href={`/category/${salesRootId}`} onClick={onClose} style={{ textDecoration: "none", color: "inherit" }}>
+              販売管理
+            </Link>
+          ) : (
+            "販売管理"
+          )}
+        </h3>
         <ul className={styles.list}>
           {salesChildren.length > 0 ? (
             salesChildren.map((item) => {

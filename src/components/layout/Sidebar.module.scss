@@ -62,24 +62,57 @@
 }
 
 .listItem {
+  position: relative;
   font-size: fn.rem(14);
   color: var(--muted-foreground);
   cursor: pointer;
-  margin-bottom: fn.rem(8);
-  transition: color 0.2s ease;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
+  padding: fn.rem(12) fn.rem(24);
+  transition: all 0.2s ease;
 
   &:hover {
     color: var(--foreground);
+    background-color: rgba(0, 0, 0, 0.02);
   }
 
   @include mixin.sm() {
     color: #999fc0;
+
     &:hover {
       color: #ffffff;
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+  }
+}
+
+.activeListItem {
+  background-color: #eef1f4 !important;
+  color: var(--foreground) !important;
+  font-weight: 600;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: #1a1a1a;
+  }
+
+  :global(.dark) & {
+    background-color: #2d3748 !important; // Dark Mode Gray Selected Color
+
+    &::before {
+      background-color: #ffffff;
+    }
+  }
+
+  @include mixin.sm() {
+    background-color: #242a42 !important;
+    color: #ffffff !important;
+
+    &::before {
+      background-color: #3b82f6;
     }
   }
 }

@@ -3,18 +3,39 @@ import styles from "./Header.module.scss";
 import Image from "next/image";
 import logo from "../../../public/images/logo.png";
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 
 interface HeaderProps {
   onMenuClick: () => void;
 }
 
+interface CategoryNode {
+  id: string;
+  category_name: string;
+  category_slug: string;
+}
+
 export default function Header({ onMenuClick }: HeaderProps) {
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [siteRootId, setSiteRootId] = useState<string | null>(null);
+  const [salesRootId, setSalesRootId] = useState<string | null>(null);
 
   useEffect(() => {
     const isDark = document.documentElement.classList.contains("dark");
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsDarkMode(isDark);
+
+    fetch("http://localhost:4000/categories")
+      .then((res) => res.json())
+      .then((response) => {
+        const rawData: CategoryNode[] = response && response.data ? response.data : (Array.isArray(response) ? response : []);
+
+        const siteData = rawData.find(c => c.category_slug?.toLowerCase() === "genbakanri" || c.category_name === "現場管理");
+        if (siteData) setSiteRootId(siteData.id);
+
+        const salesData = rawData.find(c => c.category_slug?.toLowerCase() === "hanbaikanri" || c.category_name === "販売管理");
+        if (salesData) setSalesRootId(salesData.id);
+      })
+      .catch((err) => console.error("Error fetching header categories:", err));
   }, []);
 
   const toggleTheme = () => {
@@ -49,13 +70,28 @@ export default function Header({ onMenuClick }: HeaderProps) {
       </button>
 
       <div className={styles.logoContainer}>
-        <Image src={logo} width={51} height={40} alt="header logo" />
+        <Link href="/">
+          <Image src={logo} width={51} height={40} alt="header logo" style={{ cursor: "pointer" }} />
+        </Link>
         <span className={styles.logoText}>建工管理</span>
       </div>
 
       <div className={styles.navContainer}>
-        <button className={styles.navButton}>現場管理</button>
-        <button className={styles.navButton}>販売管理</button>
+        {siteRootId ? (
+          <Link href={`/category/${siteRootId}`} className={styles.navButton} style={{ textDecoration: "none", display: "inline-flex", alignItems: "center" }}>
+            現場管理
+          </Link>
+        ) : (
+          <button className={styles.navButton}>現場管理</button>
+        )}
+
+        {salesRootId ? (
+          <Link href={`/category/${salesRootId}`} className={styles.navButton} style={{ textDecoration: "none", display: "inline-flex", alignItems: "center" }}>
+            販売管理
+          </Link>
+        ) : (
+          <button className={styles.navButton}>販売管理</button>
+        )}
       </div>
 
       <button

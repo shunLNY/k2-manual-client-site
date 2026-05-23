@@ -9,7 +9,7 @@ export default function Home() {
   const [articles, setArticles] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:4000/articles")
+    fetch("http://localhost:4000/articles/paginate")
       .then((res) => res.json())
       .then((response) => setArticles(response.data || []));
   }, []);

@@ -4,25 +4,8 @@ import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import styles from "./Sidebar.module.scss";
 import Link from "next/link";
-
-interface SubCategory {
-  id: string;
-  category_name: string;
-  category_slug: string;
-  parent_category_id: string;
-  sort_order: number;
-  status: string;
-}
-
-interface MainCategory {
-  id: string;
-  category_name: string;
-  category_slug: string;
-  parent_category_id: string | null;
-  sort_order: number;
-  status: string;
-  children?: SubCategory[];
-}
+import { SubCategory } from "../../utils/types";
+import { MainCategory } from "../../utils/types";
 
 interface SidebarProps {
   isOpen?: boolean;

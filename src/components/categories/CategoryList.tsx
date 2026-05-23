@@ -1,16 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import styles from "./CategoryDetail.module.scss";
-
-interface DBCategoryNode {
-    id: string;
-    category_name: string;
-    category_slug: string;
-    parent_category_id: string | null;
-    sort_order: number;
-    status: string;
-    children?: DBCategoryNode[];
-}
+import { DBCategoryNode } from "../../utils/types";
 
 export default function CategoryList({ targetCategory }: { targetCategory: DBCategoryNode }) {
     return (

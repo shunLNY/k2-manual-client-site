@@ -4,15 +4,10 @@ import Image from "next/image";
 import logo from "../../../public/images/logo.png";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { CategoryNode } from "../../utils/types";
 
 interface HeaderProps {
   onMenuClick: () => void;
-}
-
-interface CategoryNode {
-  id: string;
-  category_name: string;
-  category_slug: string;
 }
 
 export default function Header({ onMenuClick }: HeaderProps) {

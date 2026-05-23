@@ -5,13 +5,7 @@ import styles from "./Footer.module.scss";
 import Image from "next/image";
 import logo from "../../../public/images/footerlogo.png";
 import Link from "next/link";
-
-interface CategoryNode {
-  id: string;
-  category_name: string;
-  category_slug: string;
-  parent_category_id: string | null;
-}
+import { CategoryNode } from "../../utils/types";
 
 export default function Footer() {
   const [parentCategories, setParentCategories] = useState<CategoryNode[]>([]);

@@ -1,7 +1,7 @@
 import React from "react";
-import { Article } from "../../types/article";
 import Image from "next/image";
 import styles from "./TopicCard.module.css";
+import { Article } from "../../utils/types";
 
 interface TopicCardProps {
   topic: Article;

@@ -1,0 +1,38 @@
+@use "../../styles/mixins" as mixin;
+@use "../../styles/functions" as fn;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.bodyWrapper {
+  display: flex;
+  flex: 1;
+  width: 100%;
+}
+
+.mainContent {
+  flex: 1;
+  padding: fn.rem(50) 0 fn.rem(60);
+  background-color: var(--background);
+
+  @include mixin.sm() {
+    padding: fn.rem(20);
+  }
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 990;
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+}

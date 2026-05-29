@@ -1,0 +1,36 @@
+/** @format */
+@use "../styles/variables" as *;
+// ****************
+@use "../styles/functions" as fn;
+@use "../styles/mixins" as mixin;
+
+.mainContainer {
+  padding: fn.rem(48) fn.rem(40);
+}
+
+.sectionTitle {
+  font-size: fn.rem(32);
+  font-weight: bold;
+  color: var(--foreground);
+  margin-bottom: fn.rem(24);
+  border-top: 1px solid var(--border);
+  padding-top: fn.rem(48);
+
+  @include mixin.sm() {
+    font-size: fn.rem(16);
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: fn.rem(24);
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

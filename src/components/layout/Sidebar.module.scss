@@ -1,0 +1,150 @@
+@use "../../styles/variables.scss" as *;
+@use "../../styles/functions" as fn;
+@use "../../styles/mixins" as mixin;
+
+.sidebar {
+  width: fn.rem(256);
+  background-color: var(--background);
+  border-right: 1px solid var(--sidebar-border);
+  padding: fn.rem(40) fn.rem(24);
+  display: block;
+
+  @include mixin.sm() {
+    position: fixed;
+    top: 0;
+    left: fn.rem(-300);
+    height: 100vh;
+    z-index: 1000;
+    transition: left 0.3s ease;
+    // background-color: var(--sidebar-primary-background);
+    padding-top: fn.rem(80);
+
+    &.isOpen {
+      left: 0;
+    }
+  }
+}
+
+.closeBtn {
+  display: none;
+
+  @include mixin.sm() {
+    display: block;
+    position: absolute;
+    top: fn.rem(20);
+    right: fn.rem(20);
+    background: transparent;
+    border: none;
+    color: var(--sidebar-primary-foreground);
+    cursor: pointer;
+  }
+}
+
+.section {
+  margin-bottom: fn.rem(32);
+}
+
+.title {
+  font-weight: 700;
+  color: var(--foreground);
+  margin-bottom: fn.rem(16);
+  font-size: fn.rem(14);
+
+  // @include mixin.sm() {
+  //   color: var(--sidebar-primary-foreground);
+  // }
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.listItem {
+  position: relative;
+  font-size: fn.rem(14);
+  color: var(--muted-foreground);
+  cursor: pointer;
+  padding: fn.rem(12) fn.rem(24);
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: var(--foreground);
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+
+  @include mixin.sm() {
+    color: #999fc0;
+
+    &:hover {
+      color: #ffffff;
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+  }
+}
+
+.activeListItem {
+  background-color: #eef1f4 !important;
+  color: var(--foreground) !important;
+  font-weight: 600;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: #1a1a1a;
+  }
+
+  :global(.dark) & {
+    background-color: #2d3748 !important; // Dark Mode Gray Selected Color
+
+    &::before {
+      background-color: #ffffff;
+    }
+  }
+
+  @include mixin.sm() {
+    background-color: #242a42 !important;
+    color: #ffffff !important;
+
+    &::before {
+      background-color: #3b82f6;
+    }
+  }
+}
+
+/* Search Box */
+.searchContainer {
+  position: relative;
+  margin-bottom: fn.rem(32);
+}
+
+.searchIcon {
+  position: absolute;
+  left: fn.rem(12);
+  top: 50%;
+  transform: translateY(-50%);
+  width: fn.rem(16);
+  height: fn.rem(16);
+  color: var(--muted-foreground);
+}
+
+.searchInput {
+  width: 100%;
+  padding: fn.rem(8) fn.rem(12) fn.rem(8) fn.rem(36);
+  border: 1px solid var(--border);
+  border-radius: fn.rem(4);
+  background-color: var(--input-background, #ffffff);
+  color: var(--foreground);
+  font-size: fn.rem(14);
+  outline: none;
+  transition: border-color 0.2s;
+
+  &:focus {
+    border-color: var(--primary);
+  }
+}

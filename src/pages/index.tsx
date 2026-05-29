@@ -1,25 +1,32 @@
-import React from "react";
-import Layout from "../components/Layout";
-import { popularTopics } from "../data/mockData";
-import styles from "../styles/Home.module.css";
-import SearchSection from "@/components/commons/inputs/SearchSection";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import TopicCard from "../components/topiccard/TopicCard";
+import SearchSection from "@/components/commons/inputs/SearchSection";
+import styles from "../styles/Home.module.scss";
+import { Article } from "@/utils/types";
 
 export default function Home() {
-  return (
-    <Layout>
-      <div className={styles.mainContainer}>
-        <SearchSection />
-        <div>
-          <h2 className={styles.sectionTitle}>人気のトピック</h2>
+  const [articles, setArticles] = useState([]);
 
-          <div className={styles.grid}>
-            {popularTopics.map((topic) => (
-              <TopicCard key={topic.id} topic={topic} />
-            ))}
-          </div>
+  useEffect(() => {
+    fetch("http://localhost:4000/articles")
+      .then((res) => res.json())
+      .then((response) => setArticles(response.data || []));
+  }, []);
+
+  return (
+    <div className={styles.mainContainer}>
+      <SearchSection />
+      <div>
+        <h2 className={styles.sectionTitle}>人気のトピック</h2>
+
+        <div className={styles.grid}>
+          {articles.map((article: Article) => (
+            <TopicCard key={article.id} topic={article} />
+          ))}
         </div>
       </div>
-    </Layout>
+    </div>
   );
 }

@@ -1,0 +1,116 @@
+/** @format */
+@use "../../styles/variables.scss" as *;
+// ****************
+@use "../../styles/functions" as fn;
+@use "../../styles/mixins" as mixin;
+
+.container {
+  padding: 0 fn.rem(40) fn.rem(48);
+
+  @include mixin.sm() {
+    padding: fn.rem(24) fn.rem(20);
+  }
+}
+
+.breadcrumb {
+  font-size: fn.rem(14);
+  color: var(--foreground);
+  margin-bottom: fn.rem(40);
+  display: flex;
+  align-items: center;
+  gap: fn.rem(8);
+
+  span {
+    color: var(--foreground);
+    font-weight: 500;
+  }
+}
+
+.headerArea {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: fn.rem(32);
+
+  @include mixin.sm() {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: fn.rem(12);
+  }
+}
+
+.title {
+  font-size: fn.rem(32);
+  font-weight: bold;
+  color: var(--foreground);
+}
+
+.date {
+  font-size: fn.rem(14);
+  color: var(--foreground);
+}
+
+.contentBox {
+  background-color: var(--secondary);
+  border-radius: fn.rem(8);
+  padding: fn.rem(40);
+
+  @include mixin.sm() {
+    padding: fn.rem(24) fn.rem(20);
+  }
+}
+
+.treeList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nestedList {
+  padding-left: fn.rem(28);
+  margin-top: fn.rem(16);
+}
+
+.listItem {
+  display: flex;
+  align-items: flex-start;
+  gap: fn.rem(16);
+  margin-bottom: fn.rem(16);
+  color: var(--foreground);
+  font-size: fn.rem(14);
+  line-height: 1.5;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.itemContent {
+  flex: 1;
+}
+
+.boldText {
+  font-weight: bold;
+  font-size: fn.rem(20);
+  color: var(--foreground);
+}
+
+.icon {
+  flex-shrink: 0;
+  width: fn.rem(16);
+  height: fn.rem(16);
+  margin-top: fn.rem(2);
+  stroke: var(--muted-foreground);
+  stroke-width: 1.5;
+}
+
+.articleLink {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+    color: var(--primary);
+  }
+}

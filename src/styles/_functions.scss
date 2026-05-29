@@ -1,0 +1,12 @@
+@use "sass:math";
+
+$vw-viewport: 428;
+$html-font-size: 16;
+
+@function get-vw($number, $vw-viewport: 1440px) {
+  @return math.div($number, $vw-viewport) * 100vw;
+}
+
+@function rem($number) {
+  @return math.div($number, $html-font-size) * 1rem;
+}

@@ -16,7 +16,7 @@
     height: 100vh;
     z-index: 1000;
     transition: left 0.3s ease;
-    background-color: var(--sidebar-primary-background);
+    // background-color: var(--sidebar-primary-background);
     padding-top: fn.rem(80);
 
     &.isOpen {
@@ -50,9 +50,9 @@
   margin-bottom: fn.rem(16);
   font-size: fn.rem(14);
 
-  @include mixin.sm() {
-    color: var(--sidebar-primary-foreground);
-  }
+  // @include mixin.sm() {
+  //   color: var(--sidebar-primary-foreground);
+  // }
 }
 
 .list {

@@ -1,5 +1,5 @@
 .card {
-  background-color: var(--theme-bg-card);
+  /* background-color: var(--theme-bg-card); */
   border: 1px solid #eaeaea;
   border-radius: 6px;
   overflow: hidden;
@@ -16,6 +16,7 @@
 }
 .cardcontent {
   padding: 1rem;
+  background: var(--secondary);
 }
 .cardcontent h4 {
   font-size: 1.5rem;

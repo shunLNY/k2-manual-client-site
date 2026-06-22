@@ -24,9 +24,27 @@
   display: flex;
   flex-wrap: wrap;
   gap: fn.rem(8);
+  display: flex;
+  align-items: center;
 
   span {
     color: var(--sidebar-primary-background);
+  }
+
+  .link {
+    color: #2563eb;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s;
+
+    &:hover {
+      text-decoration: underline;
+      color: #1d4ed8;
+    }
+  }
+
+  .current {
+    color: #6b7280;
   }
 }
 
@@ -47,10 +65,11 @@
   position: relative;
   width: 100%;
   height: fn.rem(300);
-  border-radius: fn.rem(8);
 
   img {
     object-fit: cover;
+    border-top-left-radius: fn.rem(8);
+    border-top-right-radius: fn.rem(8);
   }
 
   @include mixin.sm() {

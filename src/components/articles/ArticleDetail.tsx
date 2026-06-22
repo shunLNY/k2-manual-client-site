@@ -3,6 +3,7 @@ import Image from "next/image";
 import styles from "./ArticleDetail.module.scss";
 import defaultHeroImage from "../../../public/images/unsplash.png";
 import { ArticleDetailProps } from "../../utils/types";
+import Link from "next/link";
 
 export default function ArticleDetail({ article }: ArticleDetailProps) {
   if (!article) {
@@ -17,17 +18,37 @@ export default function ArticleDetail({ article }: ArticleDetailProps) {
     <div className={styles.container}>
       {/* 1. Breadcrumb */}
       <div className={styles.breadcrumb}>
-        Help Center &gt; Reference &gt;{" "}
-        {/* 1. If there is a Main Category, it will be displayed first. */}
+        <Link href="/help-center" className={styles.link}>
+          Help Center
+        </Link>{" "}
+        &gt;{" "}
+        <Link href="/help-center/reference" className={styles.link}>
+          Reference
+        </Link>{" "}
+        &gt;
         {article.category?.parentCategory?.category_name && (
-          <>{article.category.parentCategory.category_name} &gt; </>
+          <>
+            <Link
+              href={`/category/${article.category.parentCategory.id}`}
+              className={styles.link}
+            >
+              {article.category.parentCategory.category_name}
+            </Link>{" "}
+            &gt;{" "}
+          </>
         )}
-        {/* 2. If the current Category (Sub Category) exists, it will continue to be displayed. */}
         {article.category?.category_name && (
-          <>{article.category.category_name} &gt; </>
+          <>
+            <Link
+              href={`/category/${article.category.id}`}
+              className={styles.link}
+            >
+              {article.category.category_name}
+            </Link>{" "}
+            &gt;{" "}
+          </>
         )}
-        {/* 3. Finally, the article title will be displayed. */}
-        <span>{article.title}</span>
+        <span className={styles.current}>{article.title}</span>
       </div>
 
       {/* 2. Main Title */}

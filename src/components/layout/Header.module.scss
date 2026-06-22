@@ -68,8 +68,11 @@
 
 .navContainer {
   display: flex;
-  gap: fn.rem(12);
+  align-items: flex-end;
+  gap: fn.rem(8);
   margin-left: fn.rem(96);
+  margin-bottom: fn.rem(-33);
+  border-bottom: 2px solid #d7d9e4;
 
   @include mixin.sm() {
     margin-left: auto;
@@ -77,17 +80,27 @@
 }
 
 .navButton {
-  background-color: var(--primary);
-  color: var(--primary-foreground);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: none;
-  border-radius: fn.rem(4);
-  padding: fn.rem(8) fn.rem(16);
+  border-radius: fn.rem(12) fn.rem(12) 0 0;
+  padding: fn.rem(10) fn.rem(16);
   font-size: fn.rem(14);
+  font-weight: bold;
+  text-decoration: none;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease-in-out;
+  background-color: var(--header-border);
+  color: #8a8d9f;
 
-  &:hover {
-    background-color: var(--sidebar-ring, #2563eb);
+  &:hover:not(.active) {
+    background-color: #e2e4eb;
+  }
+
+  &.active {
+    background-color: #242533;
+    color: #ffffff;
   }
 }
 

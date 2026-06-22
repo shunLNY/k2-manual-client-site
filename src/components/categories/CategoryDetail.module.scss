@@ -24,6 +24,18 @@
     color: var(--foreground);
     font-weight: 500;
   }
+
+  .link {
+    color: #2563eb; /* ပုံထဲကလို တောက်ပတဲ့ အပြာရောင် (App Blue) */
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s ease;
+
+    &:hover {
+      text-decoration: underline; /* Mouse တင်လိုက်ရင် မျဉ်းတားပြပါမယ် */
+      color: #1d4ed8; /* Hover ဖြစ်ချိန် အပြာရင့်ရောင် */
+    }
+  }
 }
 
 .headerArea {
@@ -64,6 +76,10 @@
   list-style: none;
   padding: 0;
   margin: 0;
+  .borderBottom {
+    padding: fn.rem(16) 0;
+    border-bottom: 1px solid var(--header-border);
+  }
 }
 
 .nestedList {
@@ -93,6 +109,9 @@
   font-weight: bold;
   font-size: fn.rem(20);
   color: var(--foreground);
+  border-bottom: 1px solid var(--borderline);
+  display: inline-block;
+  padding-bottom: 0.3rem;
 }
 
 .icon {

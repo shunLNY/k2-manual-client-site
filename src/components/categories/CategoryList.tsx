@@ -11,7 +11,11 @@ export default function CategoryList({
   return (
     <div className={styles.container}>
       <div className={styles.breadcrumb}>
-        Help Center &gt; <span>{targetCategory.category_name}</span>
+        <Link href="/help-center" className={styles.link}>
+          Help Center
+        </Link>{" "}
+        &gt;
+        <span>{targetCategory.category_name}</span>
       </div>
 
       <div className={styles.headerArea}>
@@ -24,8 +28,7 @@ export default function CategoryList({
             targetCategory.children.map((child) => (
               <li
                 key={child.id}
-                className={styles.listItem}
-                style={{ padding: "16px 0", borderBottom: "1px solid #edf0f2" }}
+                className={`${styles.listItem} ${styles.borderBottom} `}
               >
                 <svg
                   className={styles.icon}

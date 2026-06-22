@@ -109,8 +109,26 @@ export default function CategoryDetail({
 
   return (
     <div className={styles.container}>
-      <div className={styles.breadcrumb}>
+      {/* <div className={styles.breadcrumb}>
         Help Center &gt; {parentName && `${parentName} > `}{" "}
+        <span>{targetCategory.category_name}</span>
+      </div> */}
+      <div className={styles.breadcrumb}>
+        <Link href="/help-center" className={styles.link}>
+          Help Center
+        </Link>{" "}
+        &gt;{" "}
+        {parentName && (
+          <>
+            <Link
+              href={`/category/${targetCategory.parent_category_id || ""}`}
+              className={styles.link}
+            >
+              {parentName}
+            </Link>{" "}
+            &gt;{" "}
+          </>
+        )}
         <span>{targetCategory.category_name}</span>
       </div>
 

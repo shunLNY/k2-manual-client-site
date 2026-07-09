@@ -7,9 +7,7 @@ import Link from "next/link";
 
 export default function ArticleDetail({ article }: ArticleDetailProps) {
   if (!article) {
-    return (
-      <div className={styles.container}>データကို 불러오는 중입니다...</div>
-    );
+    return <div className={styles.container}>Data information...</div>;
   }
 
   console.log("Article Data:", article);
@@ -18,14 +16,10 @@ export default function ArticleDetail({ article }: ArticleDetailProps) {
     <div className={styles.container}>
       {/* 1. Breadcrumb */}
       <div className={styles.breadcrumb}>
-        <Link href="/help-center" className={styles.link}>
+        <Link href="/" className={styles.link}>
           Help Center
         </Link>{" "}
         &gt;{" "}
-        <Link href="/help-center/reference" className={styles.link}>
-          Reference
-        </Link>{" "}
-        &gt;
         {article.category?.parentCategory?.category_name && (
           <>
             <Link

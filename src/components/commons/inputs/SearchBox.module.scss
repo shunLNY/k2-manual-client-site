@@ -1,0 +1,240 @@
+/** @format */
+@use "../../../styles/functions" as fn;
+@use "../../../styles/mixins" as mixin;
+
+.searchSection {
+  background-color: var(--muted-background);
+  padding: fn.rem(16) fn.rem(24);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+
+  @include mixin.sm() {
+    padding: fn.rem(12) fn.rem(20);
+  }
+
+  &.transparentBg {
+    background-color: transparent !important;
+    padding-top: fn.rem(40);
+    margin-bottom: fn.rem(60);
+  }
+}
+
+.searchInputWrapper {
+  display: flex;
+  align-items: center;
+  background-color: var(--input-background);
+  border-radius: fn.rem(999);
+  padding: fn.rem(11) fn.rem(16);
+  width: 100%;
+  max-width: fn.rem(428);
+  gap: fn.rem(8);
+  box-shadow: 0 fn.rem(2) fn.rem(8) rgba(0, 0, 0, 0.04);
+
+  &.transparentBg {
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 fn.rem(4) fn.rem(12) rgba(0, 0, 0, 0.08) !important;
+
+    .searchIcon {
+      color: #718096 !important;
+    }
+
+    .searchInput {
+      color: #1a1a1a !important;
+      &::placeholder {
+        color: #a0aec0 !important;
+      }
+    }
+  }
+}
+
+.searchIcon {
+  color: #1a1a1a;
+  flex-shrink: 0;
+}
+
+.searchInput {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: fn.rem(14);
+  color: var(--foreground);
+  font-family: var(--font-sans, sans-serif);
+
+  &::placeholder {
+    color: #8a8d9f;
+  }
+}
+
+/* --- Dropdown Layout Container --- */
+.dropdownWrapper {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  padding: fn.rem(8) fn.rem(24);
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+}
+
+.dropdownContainer {
+  background-color: #ffffff;
+  border-radius: fn.rem(8);
+  box-shadow: 0 fn.rem(10) fn.rem(30) rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: fn.rem(1200);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+
+  @include mixin.sm() {
+    grid-template-columns: 1fr;
+  }
+}
+
+.columnSection {
+  padding: fn.rem(24);
+  display: flex;
+  flex-direction: column;
+
+  &:first-child {
+    border-right: 1px solid #eef0f5;
+  }
+}
+
+.columnHeader {
+  font-size: fn.rem(12);
+  color: #8a8d9f;
+  font-weight: 500;
+  margin: 0 0 fn.rem(8) 0;
+}
+
+.resultCount {
+  font-size: fn.rem(14);
+  color: #1a1a1a;
+  margin: 0 0 fn.rem(16) 0;
+
+  strong {
+    font-weight: 700;
+  }
+}
+
+.listContainer {
+  display: flex;
+  flex-direction: column;
+  gap: fn.rem(12);
+  max-height: fn.rem(400);
+  overflow-y: auto;
+}
+
+/* --- Categories List Styles --- */
+.categoryItem {
+  font-size: fn.rem(13);
+  color: #242533;
+  padding: fn.rem(12) 0;
+  cursor: pointer;
+  border-bottom: 1px solid #f1f3f7;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--primary, #0056b3);
+    background-color: #fafbfc;
+  }
+}
+
+/* --- Articles Card Styles --- */
+.articleHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.viewAllBtn {
+  background: none;
+  border: none;
+  color: #1a1a1a;
+  font-size: fn.rem(14);
+  font-weight: bold;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+
+  &:hover {
+    color: #555;
+  }
+}
+
+.articleCard {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  background-color: #eef1f6;
+  border-radius: fn.rem(6);
+  cursor: pointer;
+  text-decoration: none;
+  overflow: hidden;
+  padding: 0;
+  gap: 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 fn.rem(4) fn.rem(12) rgba(0, 0, 0, 0.05);
+  }
+}
+
+.thumbnailWrapper {
+  position: relative;
+  width: fn.rem(140);
+  min-height: fn.rem(130);
+  flex-shrink: 0;
+}
+
+.thumbnail {
+  object-fit: cover;
+}
+
+.articleContent {
+  display: flex;
+  flex-direction: column;
+  gap: fn.rem(6);
+  padding: fn.rem(16);
+  min-width: 0;
+  flex-grow: 1;
+  justify-content: center;
+}
+
+.articleBreadcrumb {
+  font-size: fn.rem(12);
+  color: #333333;
+  margin-bottom: fn.rem(2);
+}
+
+.articleTitle {
+  font-size: fn.rem(15);
+  font-weight: bold;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.articleExcerpt {
+  font-size: fn.rem(13);
+  color: #4a4d5e;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.5;
+}
+
+.articleDate {
+  font-size: fn.rem(13);
+  color: #71768b;
+  margin-top: fn.rem(4);
+}

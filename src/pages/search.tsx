@@ -1,8 +1,9 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import styles from "./CategoryDetail.module.scss";
-import { DBCategoryNode, Article } from "../../utils/types";
+import { useRouter } from "next/router";
+import styles from "./SearchPage.module.scss";
+import { DBCategoryNode, Article } from "../utils/types";
 
 const getImageUrl = (path?: string) => {
   if (!path) return "/placeholder-image.jpg";
@@ -10,6 +11,7 @@ const getImageUrl = (path?: string) => {
   return path.startsWith("/") ? path : `/${path}`;
 };
 
+// Tree Structure ထဲတွင် Root မှစ၍ သက်ဆိုင်ရာ Category (Level 1, 2, 3...) ဆီသို့ သွားသော လမ်းကြောင်းကို ရှာပေးသည့် Function
 const findCategoryPath = (
   nodes: DBCategoryNode[],
   targetId: string,
@@ -17,6 +19,7 @@ const findCategoryPath = (
 ): DBCategoryNode[] | null => {
   for (const node of nodes) {
     const path = [...currentPath, node];
+
     if (node.id === targetId) {
       return path;
     }
@@ -29,28 +32,25 @@ const findCategoryPath = (
   return null;
 };
 
-// Keeps the chunk size small so you can see it lazy load your 7 items
-const ITEMS_PER_PAGE = 3;
+export default function SearchResultsPage() {
+  const router = useRouter();
+  const { q, category_id, cid } = router.query;
+  const searchQuery = typeof q === "string" ? q : "";
+  const targetCategoryId = (
+    typeof category_id === "string"
+      ? category_id
+      : typeof cid === "string"
+      ? cid
+      : ""
+  ).trim();
 
-export default function CategoryDetail({
-  targetCategory,
-  formattedDate,
-}: {
-  targetCategory: DBCategoryNode;
-  formattedDate: string;
-}) {
   const [allArticles, setAllArticles] = useState<Article[]>([]);
+  const [categories, setCategories] = useState<DBCategoryNode[]>([]);
+  const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
   const [breadcrumbTrail, setBreadcrumbTrail] = useState<DBCategoryNode[]>([]);
-
-  // Loading states
   const [loading, setLoading] = useState(true);
-  const [isFetchingMore, setIsFetchingMore] = useState(false);
 
-  // Lazy load states
-  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
-  const loadMoreRef = useRef<HTMLDivElement | null>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-
+  // 1. API သို့မဟုတ် Database မှ ဒေတာများ ဆွဲယူခြင်း
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -66,13 +66,7 @@ export default function CategoryDetail({
 
         if (categoriesRes.ok) {
           const categoryData = await categoriesRes.json();
-          const rawCategories = categoryData.data || categoryData;
-          const path = findCategoryPath(rawCategories, targetCategory.id);
-          if (path) {
-            setBreadcrumbTrail(path);
-          } else {
-            setBreadcrumbTrail([targetCategory]);
-          }
+          setCategories(categoryData.data || categoryData);
         }
       } catch (err) {
         console.error("There was an error retrieving data", err);
@@ -81,52 +75,61 @@ export default function CategoryDetail({
       }
     };
     fetchData();
-  }, [targetCategory.id]);
+  }, []);
 
-  // Intersection Observer for lazy loading items on scroll
+  // 2. Search Query နှင့် Category Filter ကို အသုံးပြု၍ Articles များကို စစ်ထုတ်ခြင်း
+  // Note: Moved this ABOVE the breadcrumb logic so we can use the filtered results to guess the category if needed.
   useEffect(() => {
-    // Clean up previous observer if it exists
-    if (observerRef.current) observerRef.current.disconnect();
+    let results = allArticles;
 
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        const target = entries[0];
-        if (target.isIntersecting && !isFetchingMore) {
-          setIsFetchingMore(true);
-
-          // Artificial delay of 1.5 seconds to make loading visible
-          setTimeout(() => {
-            setVisibleCount((prevCount) => prevCount + ITEMS_PER_PAGE);
-            setIsFetchingMore(false);
-          }, 1500);
-        }
-      },
-      { threshold: 1.0 }
-    );
-
-    const currentRef = loadMoreRef.current;
-    if (currentRef) {
-      observerRef.current.observe(currentRef);
+    if (targetCategoryId) {
+      results = results.filter((a) => a.category_id === targetCategoryId);
     }
 
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
+    if (searchQuery) {
+      const lowerQuery = searchQuery.toLowerCase();
+      results = results.filter((a) => {
+        const titleMatch = a.title?.toLowerCase().includes(lowerQuery);
+        const excerptMatch = a.excerpt?.toLowerCase().includes(lowerQuery);
+        const categoryMatch =
+          a.category?.category_name?.toLowerCase().includes(lowerQuery) ||
+          a.category_name?.toLowerCase().includes(lowerQuery);
+
+        return titleMatch || excerptMatch || categoryMatch;
+      });
+    }
+
+    setFilteredArticles(results);
+  }, [searchQuery, targetCategoryId, allArticles]);
+
+  // 3. URL ပါ Category ID ကို အခြေခံပြီး Level 1, 2, 3 အစရှိသဖြင့် Page Breadcrumb Trail ကို Dynamic တွက်ချက်ခြင်း
+  useEffect(() => {
+    let activeCategoryId = targetCategoryId;
+
+    // 🟢 SMART FALLBACK FIX: If no category is in the URL, but ALL filtered articles
+    // belong to the exact same category, infer that category to build the breadcrumbs.
+    if (!activeCategoryId && filteredArticles.length > 0) {
+      const firstCatId = filteredArticles[0].category_id;
+      const allShareSameCategory = filteredArticles.every(
+        (a) => a.category_id === firstCatId
+      );
+
+      if (allShareSameCategory && firstCatId) {
+        activeCategoryId = firstCatId;
       }
-    };
-  }, [allArticles, isFetchingMore]);
+    }
 
-  // Use actual data only (No duplication)
-  const targetArticles = allArticles.filter(
-    (a: Article) => a.category_id === targetCategory.id
-  );
-
-  // Slice the articles array to only show the "visible" ones
-  const visibleArticles = targetArticles.slice(0, visibleCount);
-
-  const cardBreadcrumbText = breadcrumbTrail
-    .map((crumb) => crumb.category_name)
-    .join(" ＞ ");
+    if (activeCategoryId && categories.length > 0) {
+      const path = findCategoryPath(categories, activeCategoryId);
+      if (path) {
+        setBreadcrumbTrail(path);
+      } else {
+        setBreadcrumbTrail([]);
+      }
+    } else {
+      setBreadcrumbTrail([]);
+    }
+  }, [targetCategoryId, categories, filteredArticles]);
 
   if (loading) {
     return (
@@ -138,6 +141,7 @@ export default function CategoryDetail({
 
   return (
     <div className={styles.container}>
+      {/* Breadcrumb Section */}
       <div className={styles.breadcrumb}>
         <Link href="/" className={styles.link}>
           Help Center
@@ -161,15 +165,29 @@ export default function CategoryDetail({
         })}
       </div>
 
+      {/* Header Area */}
       <div className={styles.headerArea}>
-        <h1 className={styles.title}>{targetCategory.category_name} の記事</h1>
-        <div className={styles.date}>更新 : {formattedDate}</div>
+        <h1 className={styles.title}>
+          Results for “{searchQuery || "すべて"}” の記事
+        </h1>
+        <div className={styles.date}>
+          found {filteredArticles.length} results
+        </div>
       </div>
 
+      {/* Articles List */}
       <div className={styles.articleList}>
-        {targetArticles.length > 0 ? (
-          <>
-            {visibleArticles.map((article: Article) => (
+        {filteredArticles.length > 0 ? (
+          filteredArticles.map((article: Article) => {
+            const cardTrail = findCategoryPath(
+              categories,
+              article.category_id || ""
+            );
+            const cardBreadcrumbText = cardTrail
+              ? cardTrail.map((crumb) => crumb.category_name).join(" ＞ ")
+              : article.category_name || "未分類";
+
+            return (
               <Link
                 href={`/articles/${article.id}`}
                 key={article.id}
@@ -199,7 +217,7 @@ export default function CategoryDetail({
                   <p className={styles.cardDescription}>
                     {article.excerpt ||
                       article.summary ||
-                      "建工管理をはじめてご利用になる方、建工管理利用になる方、建工管理に招待を受けた方向けのガイド利用になる方、建工管理に招待を受けた方向けのガに招待を受けた方向けのガイドをまとめて ..."}
+                      "記事の詳細プレビューテキストがここに表示されます。"}
                   </p>
 
                   <div className={styles.cardDate}>
@@ -216,29 +234,11 @@ export default function CategoryDetail({
                   </div>
                 </div>
               </Link>
-            ))}
-
-            {/* Loading trigger element */}
-            {visibleCount < targetArticles.length && (
-              <div
-                ref={loadMoreRef}
-                className={styles.loader}
-                style={{
-                  width: "100%",
-                  textAlign: "center",
-                  padding: "30px 0",
-                  fontWeight: "bold",
-                }}
-              >
-                {isFetchingMore
-                  ? "さらに読み込み中..."
-                  : "スクロールして読み込む"}
-              </div>
-            )}
-          </>
+            );
+          })
         ) : (
           <p className={styles.emptyText}>
-            このカテゴリーには記事がありません。
+            該当する記事が見つかりませんでした。
           </p>
         )}
       </div>

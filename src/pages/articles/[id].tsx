@@ -1,8 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import ArticleDetail from "../../components/articles/ArticleDetail";
-import { Article } from "../../utils/types"; // သင့်ရဲ့ types ဖိုင်လမ်းကြောင်း
-
+import { Article } from "../../utils/types";
 export default function ArticlePage() {
   const router = useRouter();
   const { id } = router.query;

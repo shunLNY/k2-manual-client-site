@@ -9,14 +9,18 @@
 /* Header Styles                               */
 /* ------------------------------------------- */
 
-.header {
+.headerWrapper {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--header-background);
+  font-family: var(--font-sans, sans-serif);
+}
+
+.topBar {
   display: flex;
   align-items: center;
   padding: fn.rem(16) fn.rem(24);
-  background-color: var(--header-background);
-  border-bottom: 1px solid var(--header-border);
   gap: fn.rem(32);
-  font-family: var(--font-sans, sans-serif);
 
   @include mixin.sm() {
     padding: fn.rem(16) fn.rem(20);
@@ -71,7 +75,7 @@
   align-items: flex-end;
   gap: fn.rem(8);
   margin-left: fn.rem(96);
-  margin-bottom: fn.rem(-33);
+  margin-bottom: fn.rem(-48);
   border-bottom: 2px solid #d7d9e4;
 
   @include mixin.sm() {
@@ -80,26 +84,27 @@
 }
 
 .navButton {
+  width: fn.rem(100);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border: none;
   border-radius: fn.rem(12) fn.rem(12) 0 0;
-  padding: fn.rem(10) fn.rem(16);
+  padding: fn.rem(5) fn.rem(16);
   font-size: fn.rem(14);
   font-weight: bold;
   text-decoration: none;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   background-color: var(--header-border);
-  color: #8a8d9f;
+  color: var(--foreground);
 
   &:hover:not(.active) {
     background-color: #e2e4eb;
   }
 
   &.active {
-    background-color: #242533;
+    background-color: var(--tabbar-background);
     color: #ffffff;
   }
 }
@@ -118,7 +123,7 @@
 }
 
 /* ------------------------------------------- */
-/* Sidebar and Overlay                   */
+/* Sidebar and Overlay                         */
 /* ------------------------------------------- */
 
 .sidebar {

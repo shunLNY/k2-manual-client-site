@@ -45,7 +45,9 @@
 
   --sidebar: #ffffff;
   --sidebar-foreground: #333333;
+  --sidebar-color: #2b2b41;
   --sidebar-primary-background: #222234;
+  --tabbar-background: #222234;
   --sidebar-primary-foreground: #e7e8f0;
   --sidebar-accent: #e0f2fe;
   --sidebar-accent-foreground: #1e3a8a;
@@ -105,6 +107,7 @@
 .dark {
   --background: #2b2b41;
   --muted-background: #999fc0;
+  --tabbar-background: #3e3e59;
 
   --foreground: #ffffff;
   --muted-foreground: #c2c5d9;
@@ -138,6 +141,7 @@
 
   --sidebar: #222234;
   --sidebar-foreground: #999fc0;
+  --sidebar-color: #babcd0;
   --sidebar-primary-background: #999fc0;
   --sidebar-primary-foreground: #222234;
   --sidebar-accent: #e0f2fe;

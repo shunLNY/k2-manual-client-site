@@ -13,6 +13,7 @@ export type CategoryNode = {
   category_name: string;
   category_slug: string;
   parent_category_id: string | null;
+  children?: CategoryNode[];
 };
 
 export type SubCategory = {
@@ -33,6 +34,20 @@ export type MainCategory = {
   children?: SubCategory[];
 };
 
+export type ArticleCategory = {
+  id: string;
+  category_name: string;
+  parent_category_id?: string | null;
+  category_slug?: string;
+  status?: string;
+  sort_order?: number;
+
+  parentCategory?: {
+    id: string;
+    category_name: string;
+  };
+};
+
 export interface Article {
   id: string;
   category_id?: string;
@@ -44,17 +59,9 @@ export interface Article {
   createdAt?: string;
   updatedAt?: string;
 
-  // Custom dynamic fields
   summary?: string;
   category_name?: string;
-  category?: {
-    id: string;
-    category_name: string;
-    parentCategory?: {
-      id: string;
-      category_name: string;
-    };
-  };
+  category?: ArticleCategory;
 }
 
 export type PaginatedResponse = {

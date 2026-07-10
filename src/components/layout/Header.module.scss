@@ -137,7 +137,7 @@
   transition: left 0.3s ease-in-out;
   z-index: 1000;
   padding: fn.rem(24);
-  box-shadow: fn.rem(4) 0 fn.rem(10) rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-2xs);
 
   &.sidebarOpen {
     left: 0;

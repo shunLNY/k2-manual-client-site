@@ -5,11 +5,11 @@
 
 .container {
   padding: 0 fn.rem(48);
-  background-color: #f4f5f7; /* UI ထဲကအတိုင်း ခဲပြာနုရောင် နောက်ခံ */
+  background-color: #f4f5f7;
   min-height: 100vh;
 
   @include mixin.sm() {
-    padding: fn.rem(24) fn.rem(20);
+    padding: 0;
   }
 }
 
@@ -81,12 +81,12 @@
   overflow: hidden;
   text-decoration: none;
   color: inherit;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-2xs);
   border: 1px solid #e5e7eb;
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 
   &:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-sm);
     transform: translateY(-2px);
   }
 
@@ -97,7 +97,7 @@
 
 /* Image Wrapper */
 .imageContainer {
-  position: relative; /* REQUIRED: Next.js 'fill' images need a relative parent */
+  position: relative;
   width: fn.rem(280);
   min-width: fn.rem(280);
   flex-shrink: 0;
@@ -105,7 +105,7 @@
 
   @include mixin.sm() {
     width: 100%;
-    height: fn.rem(180); /* Mobile ပေါ်တွင် Image အရွယ်အစား ပုံသေထားရန် */
+    height: fn.rem(180);
   }
 }
 

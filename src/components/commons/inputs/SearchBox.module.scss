@@ -30,12 +30,12 @@
   width: 100%;
   max-width: fn.rem(428);
   gap: fn.rem(8);
-  box-shadow: 0 fn.rem(2) fn.rem(8) rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-2xs);
 
   &.transparentBg {
     background-color: #ffffff !important;
     border: 1px solid #e2e8f0 !important;
-    box-shadow: 0 fn.rem(4) fn.rem(12) rgba(0, 0, 0, 0.08) !important;
+    box-shadow: var(--shadow-sm) !important;
 
     .searchIcon {
       color: #718096 !important;
@@ -79,12 +79,16 @@
   z-index: 100;
   display: flex;
   justify-content: center;
+
+  @include mixin.sm() {
+    padding: fn.rem(8) fn.rem(16);
+  }
 }
 
 .dropdownContainer {
   background-color: #ffffff;
   border-radius: fn.rem(8);
-  box-shadow: 0 fn.rem(10) fn.rem(30) rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-2xs);
   width: 100%;
   max-width: fn.rem(1200);
   display: grid;
@@ -92,10 +96,48 @@
   overflow: hidden;
 
   @include mixin.sm() {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
   }
 }
 
+/* --- Mobile Tabs Styles --- */
+.mobileTabs {
+  display: none;
+
+  @include mixin.sm() {
+    display: flex;
+    width: 100%;
+    border-bottom: 1px solid #eef0f5;
+  }
+}
+
+.tabButton {
+  flex: 1;
+  padding: fn.rem(12) fn.rem(16);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: fn.rem(14);
+  font-weight: 600;
+  color: #8a8d9f;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+
+  &.activeTab {
+    color: var(--primary, #0056b3);
+    border-bottom-color: var(--primary, #0056b3);
+  }
+}
+
+.hideOnMobile {
+  @include mixin.sm() {
+    display: none !important;
+  }
+}
+
+/* --- Columns --- */
 .columnSection {
   padding: fn.rem(24);
   display: flex;
@@ -103,6 +145,14 @@
 
   &:first-child {
     border-right: 1px solid #eef0f5;
+
+    @include mixin.sm() {
+      border-right: none;
+    }
+  }
+
+  @include mixin.sm() {
+    padding: fn.rem(16);
   }
 }
 
@@ -111,6 +161,10 @@
   color: #8a8d9f;
   font-weight: 500;
   margin: 0 0 fn.rem(8) 0;
+
+  @include mixin.sm() {
+    display: none; /* Optional: Hide column header on mobile since the tab acts as the header */
+  }
 }
 
 .resultCount {
@@ -183,7 +237,7 @@
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 fn.rem(4) fn.rem(12) rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-2xs);
   }
 }
 

@@ -163,7 +163,7 @@ export default function CategoryDetail({
 
       <div className={styles.headerArea}>
         <h1 className={styles.title}>{targetCategory.category_name} の記事</h1>
-        <div className={styles.date}>更新 : {formattedDate}</div>
+        {/* <div className={styles.date}>更新 : {formattedDate}</div> */}
       </div>
 
       <div className={styles.articleList}>

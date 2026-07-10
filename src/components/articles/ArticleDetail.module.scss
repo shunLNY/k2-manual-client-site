@@ -7,7 +7,7 @@
 .container {
   padding: 0 fn.rem(40) 0;
   @include mixin.sm() {
-    padding: fn.rem(24) fn.rem(20);
+    padding: 0;
   }
 }
 
@@ -156,7 +156,7 @@
     height: auto;
     border-radius: fn.rem(4);
     margin: fn.rem(24) 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-2xs);
   }
 
   ul,

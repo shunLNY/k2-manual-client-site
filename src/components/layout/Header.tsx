@@ -8,6 +8,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CategoryNode } from "../../utils/types";
 import SearchBox from "../commons/inputs/SearchBox";
+import { Menu, Moon, Sun } from "lucide-react";
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -30,7 +31,12 @@ const findCategoryPath = (
 };
 
 export default function Header({ onMenuClick }: HeaderProps) {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window !== "undefined") {
+      return document.documentElement.classList.contains("dark");
+    }
+    return false;
+  });
   const [categories, setCategories] = useState<CategoryNode[]>([]);
   const [siteRootId, setSiteRootId] = useState<string | null>(null);
   const [salesRootId, setSalesRootId] = useState<string | null>(null);
@@ -42,9 +48,6 @@ export default function Header({ onMenuClick }: HeaderProps) {
   const currentCategoryId = idMatch ? idMatch[1] : null;
 
   useEffect(() => {
-    const isDark = document.documentElement.classList.contains("dark");
-    setIsDarkMode(isDark);
-
     fetch("http://localhost:4000/categories")
       .then((res) => res.json())
       .then((response) => {
@@ -78,12 +81,26 @@ export default function Header({ onMenuClick }: HeaderProps) {
     if (currentCategoryId && categories.length > 0) {
       const path = findCategoryPath(categories, currentCategoryId);
       if (path && path.length > 0) {
-        setActiveRootId(path[0].id);
+        const rootId = path[0].id;
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setActiveRootId(rootId);
+        // store in storage
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("activeRootTabId", rootId);
+        }
+      }
+    } else if (pathname.includes("/articles/")) {
+      // Article page ကိုရောက်ရင် storage ထဲက နောက်ဆုံး ID ကို ပြန်ယူသုံးမည်
+      if (typeof window !== "undefined") {
+        const storedRootId = sessionStorage.getItem("activeRootTabId");
+        if (storedRootId) {
+          setActiveRootId(storedRootId);
+        }
       }
     } else {
       setActiveRootId(null);
     }
-  }, [currentCategoryId, categories]);
+  }, [currentCategoryId, categories, pathname]);
 
   const isSiteActive = siteRootId
     ? pathname.includes(siteRootId) || activeRootId === siteRootId
@@ -108,20 +125,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
     <header className={styles.headerWrapper}>
       <div className={styles.topBar}>
         <button className={styles.hamburgerBtn} onClick={onMenuClick}>
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-          </svg>
+          <Menu size={24} />
         </button>
 
         <div className={styles.logoContainer}>
@@ -170,41 +174,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
           onClick={toggleTheme}
           aria-label="Toggle Theme"
         >
-          {isDarkMode ? (
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-            </svg>
-          ) : (
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="12" cy="12" r="5"></circle>
-              <line x1="12" y1="1" x2="12" y2="3"></line>
-              <line x1="12" y1="21" x2="12" y2="23"></line>
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-              <line x1="1" y1="12" x2="3" y2="12"></line>
-              <line x1="21" y1="12" x2="23" y2="12"></line>
-              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-            </svg>
-          )}
+          {isDarkMode ? <Moon size={20} /> : <Sun size={20} />}
         </button>
       </div>
 

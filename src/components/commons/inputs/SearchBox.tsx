@@ -4,6 +4,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
+import { Search } from "lucide-react";
 import styles from "./SearchBox.module.scss";
 import { CategoryNode, Article } from "../../../utils/types";
 
@@ -12,6 +13,11 @@ export default function SearchBox() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [categories, setCategories] = useState<CategoryNode[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
+
+  // New state to manage active tab on mobile
+  const [activeMobileTab, setActiveMobileTab] = useState<
+    "categories" | "articles"
+  >("categories");
 
   const [filteredResults, setFilteredResults] = useState<{
     categories: CategoryNode[];
@@ -26,6 +32,7 @@ export default function SearchBox() {
   const pathname = usePathname();
   const isHomePage = pathname === "/";
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const flattenCategories = (nodes: any[]): CategoryNode[] => {
     let flatList: CategoryNode[] = [];
     nodes.forEach((node) => {
@@ -173,6 +180,7 @@ export default function SearchBox() {
   };
 
   const getArticleBreadcrumb = (art: Article): string => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const catId = (art as any).category_id || art.category?.id;
     if (catId) {
       const matchedCat = categories.find((c) => c.id === catId);
@@ -220,20 +228,8 @@ export default function SearchBox() {
           isHomePage ? styles.transparentBg : ""
         }`}
       >
-        <svg
-          className={styles.searchIcon}
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <circle cx="11" cy="11" r="8"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-        </svg>
+        <Search size={18} className={styles.searchIcon} />
+
         <input
           type="text"
           className={styles.searchInput}
@@ -248,7 +244,31 @@ export default function SearchBox() {
           filteredResults.articles.length > 0) && (
           <div className={styles.dropdownWrapper}>
             <div className={styles.dropdownContainer}>
-              <div className={styles.columnSection}>
+              {/* Mobile Tabs */}
+              <div className={styles.mobileTabs}>
+                <button
+                  className={`${styles.tabButton} ${
+                    activeMobileTab === "categories" ? styles.activeTab : ""
+                  }`}
+                  onClick={() => setActiveMobileTab("categories")}
+                >
+                  Categories
+                </button>
+                <button
+                  className={`${styles.tabButton} ${
+                    activeMobileTab === "articles" ? styles.activeTab : ""
+                  }`}
+                  onClick={() => setActiveMobileTab("articles")}
+                >
+                  Articles
+                </button>
+              </div>
+
+              <div
+                className={`${styles.columnSection} ${
+                  activeMobileTab !== "categories" ? styles.hideOnMobile : ""
+                }`}
+              >
                 <h3 className={styles.columnHeader}>Matching Categories</h3>
                 <p className={styles.resultCount}>
                   Found <strong>{filteredResults.categories.length}</strong>{" "}
@@ -275,7 +295,11 @@ export default function SearchBox() {
                 </div>
               </div>
 
-              <div className={`${styles.columnSection} ${styles.rightColumn}`}>
+              <div
+                className={`${styles.columnSection} ${styles.rightColumn} ${
+                  activeMobileTab !== "articles" ? styles.hideOnMobile : ""
+                }`}
+              >
                 <div className={styles.articleHeaderRow}>
                   <div>
                     <h3 className={styles.columnHeader}>Matching Articles</h3>
@@ -305,7 +329,6 @@ export default function SearchBox() {
                         className={styles.articleCard}
                         onClick={() => handleResultClick("article", art.id)}
                       >
-                        {/* 🟢 အသစ်: ဘယ်ဘက်တွင် ပုံရှိမည် */}
                         <div className={styles.thumbnailWrapper}>
                           <Image
                             src={

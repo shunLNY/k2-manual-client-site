@@ -9,6 +9,9 @@
   .searchSection {
     background-color: none !important;
   }
+  @include mixin.sm() {
+    padding: 0;
+  }
 }
 
 .heading {

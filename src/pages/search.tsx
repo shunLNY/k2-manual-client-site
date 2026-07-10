@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import styles from "./SearchPage.module.scss";
+import styles from "../styles/SearchPage.module.scss";
 import { DBCategoryNode, Article } from "../utils/types";
 
 const getImageUrl = (path?: string) => {
@@ -11,7 +11,6 @@ const getImageUrl = (path?: string) => {
   return path.startsWith("/") ? path : `/${path}`;
 };
 
-// Tree Structure ထဲတွင် Root မှစ၍ သက်ဆိုင်ရာ Category (Level 1, 2, 3...) ဆီသို့ သွားသော လမ်းကြောင်းကို ရှာပေးသည့် Function
 const findCategoryPath = (
   nodes: DBCategoryNode[],
   targetId: string,
@@ -99,15 +98,12 @@ export default function SearchResultsPage() {
       });
     }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setFilteredArticles(results);
   }, [searchQuery, targetCategoryId, allArticles]);
 
-  // 3. URL ပါ Category ID ကို အခြေခံပြီး Level 1, 2, 3 အစရှိသဖြင့် Page Breadcrumb Trail ကို Dynamic တွက်ချက်ခြင်း
   useEffect(() => {
     let activeCategoryId = targetCategoryId;
-
-    // 🟢 SMART FALLBACK FIX: If no category is in the URL, but ALL filtered articles
-    // belong to the exact same category, infer that category to build the breadcrumbs.
     if (!activeCategoryId && filteredArticles.length > 0) {
       const firstCatId = filteredArticles[0].category_id;
       const allShareSameCategory = filteredArticles.every(
@@ -122,6 +118,7 @@ export default function SearchResultsPage() {
     if (activeCategoryId && categories.length > 0) {
       const path = findCategoryPath(categories, activeCategoryId);
       if (path) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setBreadcrumbTrail(path);
       } else {
         setBreadcrumbTrail([]);

@@ -2,6 +2,18 @@
 @use "../../../styles/functions" as fn;
 @use "../../../styles/mixins" as mixin;
 
+/* --- Search Overlay --- */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9998;
+  cursor: pointer;
+}
+
 .searchSection {
   background-color: var(--muted-background);
   padding: fn.rem(16) fn.rem(24);
@@ -9,6 +21,12 @@
   flex-direction: column;
   align-items: center;
   position: relative;
+  z-index: 10; /* Lower default z-index so sidebar can cover it */
+
+  /* Elevate ONLY when the search overlay is open */
+  &.activeSearch {
+    z-index: 9999;
+  }
 
   @include mixin.sm() {
     padding: fn.rem(12) fn.rem(20);
@@ -181,8 +199,7 @@
   display: flex;
   flex-direction: column;
   gap: fn.rem(12);
-  max-height: fn.rem(400);
-  overflow-y: auto;
+  // max-height: fn.rem(400);
 }
 
 /* --- Categories List Styles --- */
@@ -271,8 +288,10 @@
 .articleTitle {
   font-size: fn.rem(15);
   font-weight: bold;
-  color: #1a1a1a;
-  margin: 0;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  overflow: hidden;
 }
 
 .articleExcerpt {
@@ -291,4 +310,16 @@
   font-size: fn.rem(13);
   color: #71768b;
   margin-top: fn.rem(4);
+}
+
+/* --- Search Utilities --- */
+.highlight {
+  font-weight: bold;
+  color: var(--primary, #0056b3);
+}
+
+.noResultsText {
+  font-size: fn.rem(13);
+  color: #8a8d9f;
+  margin: 0;
 }

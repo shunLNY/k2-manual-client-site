@@ -153,7 +153,7 @@ export default function SearchBox() {
     const parts = text.split(new RegExp(`(${query})`, "gi"));
     return parts.map((part, index) =>
       part.toLowerCase() === query.toLowerCase() ? (
-        <span key={index} style={{ fontWeight: "bold", color: "#0056b3" }}>
+        <span key={index} className={styles.highlight}>
           {part}
         </span>
       ) : (
@@ -217,170 +217,177 @@ export default function SearchBox() {
   };
 
   return (
-    <div
-      className={`${styles.searchSection} ${
-        isHomePage ? styles.transparentBg : ""
-      }`}
-      ref={wrapperRef}
-    >
-      <div
-        className={`${styles.searchInputWrapper} ${
-          isHomePage ? styles.transparentBg : ""
-        }`}
-      >
-        <Search size={18} className={styles.searchIcon} />
-
-        <input
-          type="text"
-          className={styles.searchInput}
-          placeholder="例）案件の登録、工程表の作成"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+    <>
+      {isDropdownOpen && (
+        <div
+          className={styles.overlay}
+          onClick={() => setIsDropdownOpen(false)}
         />
-      </div>
+      )}
+      <div
+        className={`${styles.searchSection} ${
+          isHomePage ? styles.transparentBg : ""
+        } ${isDropdownOpen ? styles.activeSearch : ""}`}
+        ref={wrapperRef}
+      >
+        <div
+          className={`${styles.searchInputWrapper} ${
+            isHomePage ? styles.transparentBg : ""
+          }`}
+        >
+          <Search size={18} className={styles.searchIcon} />
 
-      {isDropdownOpen &&
-        (filteredResults.categories.length > 0 ||
-          filteredResults.articles.length > 0) && (
-          <div className={styles.dropdownWrapper}>
-            <div className={styles.dropdownContainer}>
-              {/* Mobile Tabs */}
-              <div className={styles.mobileTabs}>
-                <button
-                  className={`${styles.tabButton} ${
-                    activeMobileTab === "categories" ? styles.activeTab : ""
-                  }`}
-                  onClick={() => setActiveMobileTab("categories")}
-                >
-                  Categories
-                </button>
-                <button
-                  className={`${styles.tabButton} ${
-                    activeMobileTab === "articles" ? styles.activeTab : ""
-                  }`}
-                  onClick={() => setActiveMobileTab("articles")}
-                >
-                  Articles
-                </button>
-              </div>
+          <input
+            type="text"
+            className={styles.searchInput}
+            placeholder="例）案件の登録、工程表の作成"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
 
-              <div
-                className={`${styles.columnSection} ${
-                  activeMobileTab !== "categories" ? styles.hideOnMobile : ""
-                }`}
-              >
-                <h3 className={styles.columnHeader}>Matching Categories</h3>
-                <p className={styles.resultCount}>
-                  Found <strong>{filteredResults.categories.length}</strong>{" "}
-                  related results
-                </p>
-                <div className={styles.listContainer}>
-                  {filteredResults.categories.length > 0 ? (
-                    filteredResults.categories.map((cat) => (
-                      <div
-                        key={`cat-${cat.id}`}
-                        className={styles.categoryItem}
-                        onClick={() => handleResultClick("category", cat.id)}
-                      >
-                        {highlightText(getCategoryBreadcrumb(cat), searchQuery)}
-                      </div>
-                    ))
-                  ) : (
-                    <p
-                      style={{ fontSize: "13px", color: "#8a8d9f", margin: 0 }}
-                    >
-                      No matching categories found
-                    </p>
-                  )}
+        {isDropdownOpen &&
+          (filteredResults.categories.length > 0 ||
+            filteredResults.articles.length > 0) && (
+            <div className={styles.dropdownWrapper}>
+              <div className={styles.dropdownContainer}>
+                {/* Mobile Tabs */}
+                <div className={styles.mobileTabs}>
+                  <button
+                    className={`${styles.tabButton} ${
+                      activeMobileTab === "categories" ? styles.activeTab : ""
+                    }`}
+                    onClick={() => setActiveMobileTab("categories")}
+                  >
+                    Categories
+                  </button>
+                  <button
+                    className={`${styles.tabButton} ${
+                      activeMobileTab === "articles" ? styles.activeTab : ""
+                    }`}
+                    onClick={() => setActiveMobileTab("articles")}
+                  >
+                    Articles
+                  </button>
                 </div>
-              </div>
 
-              <div
-                className={`${styles.columnSection} ${styles.rightColumn} ${
-                  activeMobileTab !== "articles" ? styles.hideOnMobile : ""
-                }`}
-              >
-                <div className={styles.articleHeaderRow}>
-                  <div>
-                    <h3 className={styles.columnHeader}>Matching Articles</h3>
-                    <p className={styles.resultCount}>
-                      Displaying{" "}
-                      <strong>
-                        {Math.min(filteredResults.articles.length, 3)}
-                      </strong>{" "}
-                      of {filteredResults.articles.length} related results
-                    </p>
+                <div
+                  className={`${styles.columnSection} ${
+                    activeMobileTab !== "categories" ? styles.hideOnMobile : ""
+                  }`}
+                >
+                  <h3 className={styles.columnHeader}>Matching Categories</h3>
+                  <p className={styles.resultCount}>
+                    Found <strong>{filteredResults.categories.length}</strong>{" "}
+                    related results
+                  </p>
+                  <div className={styles.listContainer}>
+                    {filteredResults.categories.length > 0 ? (
+                      filteredResults.categories.map((cat) => (
+                        <div
+                          key={`cat-${cat.id}`}
+                          className={styles.categoryItem}
+                          onClick={() => handleResultClick("category", cat.id)}
+                        >
+                          {highlightText(
+                            getCategoryBreadcrumb(cat),
+                            searchQuery
+                          )}
+                        </div>
+                      ))
+                    ) : (
+                      <p className={styles.noResultsText}>
+                        No matching categories found
+                      </p>
+                    )}
                   </div>
-                  {filteredResults.articles.length > 3 && (
-                    <button
-                      className={styles.viewAllBtn}
-                      onClick={handleViewAll}
-                    >
-                      View All
-                    </button>
-                  )}
                 </div>
 
-                <div className={styles.listContainer}>
-                  {filteredResults.articles.length > 0 ? (
-                    filteredResults.articles.slice(0, 3).map((art) => (
-                      <div
-                        key={`art-${art.id}`}
-                        className={styles.articleCard}
-                        onClick={() => handleResultClick("article", art.id)}
+                <div
+                  className={`${styles.columnSection} ${styles.rightColumn} ${
+                    activeMobileTab !== "articles" ? styles.hideOnMobile : ""
+                  }`}
+                >
+                  <div className={styles.articleHeaderRow}>
+                    <div>
+                      <h3 className={styles.columnHeader}>Matching Articles</h3>
+                      <p className={styles.resultCount}>
+                        Displaying{" "}
+                        <strong>
+                          {Math.min(filteredResults.articles.length, 3)}
+                        </strong>{" "}
+                        of {filteredResults.articles.length} related results
+                      </p>
+                    </div>
+                    {filteredResults.articles.length > 3 && (
+                      <button
+                        className={styles.viewAllBtn}
+                        onClick={handleViewAll}
                       >
-                        <div className={styles.thumbnailWrapper}>
-                          <Image
-                            src={
-                              art.thumbnail_path || "/images/placeholder.jpg"
-                            }
-                            alt={art.title}
-                            fill
-                            sizes="140px"
-                            className={styles.thumbnail}
-                          />
-                        </div>
+                        View All
+                      </button>
+                    )}
+                  </div>
 
-                        <div className={styles.articleContent}>
-                          <span className={styles.articleBreadcrumb}>
-                            {highlightText(
-                              getArticleBreadcrumb(art),
-                              searchQuery
-                            )}
-                          </span>
-                          <h4 className={styles.articleTitle}>
-                            {highlightText(art.title, searchQuery)}
-                          </h4>
-                          <p className={styles.articleExcerpt}>
-                            {art.excerpt || art.summary || ""}
-                          </p>
-                          <span className={styles.articleDate}>
-                            {art.createdAt
-                              ? new Date(art.createdAt).toLocaleDateString(
-                                  "en-US",
-                                  {
-                                    month: "long",
-                                    day: "numeric",
-                                    year: "numeric",
-                                  }
-                                )
-                              : ""}
-                          </span>
+                  <div className={styles.listContainer}>
+                    {filteredResults.articles.length > 0 ? (
+                      filteredResults.articles.slice(0, 3).map((art) => (
+                        <div
+                          key={`art-${art.id}`}
+                          className={styles.articleCard}
+                          onClick={() => handleResultClick("article", art.id)}
+                        >
+                          <div className={styles.thumbnailWrapper}>
+                            <Image
+                              src={
+                                art.thumbnail_path || "/images/placeholder.jpg"
+                              }
+                              alt={art.title}
+                              fill
+                              sizes="140px"
+                              className={styles.thumbnail}
+                            />
+                          </div>
+
+                          <div className={styles.articleContent}>
+                            <span className={styles.articleBreadcrumb}>
+                              {highlightText(
+                                getArticleBreadcrumb(art),
+                                searchQuery
+                              )}
+                            </span>
+                            <h4 className={styles.articleTitle}>
+                              {highlightText(art.title, searchQuery)}
+                            </h4>
+                            <p className={styles.articleExcerpt}>
+                              {art.excerpt || art.summary || ""}
+                            </p>
+                            <span className={styles.articleDate}>
+                              {art.createdAt
+                                ? new Date(art.createdAt).toLocaleDateString(
+                                    "en-US",
+                                    {
+                                      month: "long",
+                                      day: "numeric",
+                                      year: "numeric",
+                                    }
+                                  )
+                                : ""}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                    ))
-                  ) : (
-                    <p
-                      style={{ fontSize: "13px", color: "#8a8d9f", margin: 0 }}
-                    >
-                      No matching articles found
-                    </p>
-                  )}
+                      ))
+                    ) : (
+                      <p className={styles.noResultsText}>
+                        No matching articles found
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
-    </div>
+          )}
+      </div>
+    </>
   );
 }

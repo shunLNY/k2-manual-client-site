@@ -84,23 +84,17 @@ export default function Header({ onMenuClick }: HeaderProps) {
         const rootId = path[0].id;
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setActiveRootId(rootId);
-        // store in storage
-        if (typeof window !== "undefined") {
-          sessionStorage.setItem("activeRootTabId", rootId);
-        }
-      }
-    } else if (pathname.includes("/articles/")) {
-      // Article page ကိုရောက်ရင် storage ထဲက နောက်ဆုံး ID ကို ပြန်ယူသုံးမည်
-      if (typeof window !== "undefined") {
-        const storedRootId = sessionStorage.getItem("activeRootTabId");
-        if (storedRootId) {
-          setActiveRootId(storedRootId);
-        }
+        sessionStorage.setItem("lastActiveTab", rootId);
       }
     } else {
-      setActiveRootId(null);
+      const savedRootId = sessionStorage.getItem("lastActiveTab");
+      if (savedRootId && !isHomePage) {
+        setActiveRootId(savedRootId);
+      } else {
+        setActiveRootId(null);
+      }
     }
-  }, [currentCategoryId, categories, pathname]);
+  }, [currentCategoryId, categories, isHomePage]);
 
   const isSiteActive = siteRootId
     ? pathname.includes(siteRootId) || activeRootId === siteRootId

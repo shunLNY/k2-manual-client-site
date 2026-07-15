@@ -24,7 +24,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: fn.rem(8);
-  display: flex;
   align-items: center;
 
   span {
@@ -32,14 +31,13 @@
   }
 
   .link {
-    color: #2563eb;
+    color: var(--primary);
     text-decoration: none;
     cursor: pointer;
     transition: color 0.2s;
 
     &:hover {
       text-decoration: underline;
-      color: #1d4ed8;
     }
   }
 
@@ -60,7 +58,43 @@
   }
 }
 
-/* 3. Hero Image */
+/* 3. Related Articles */
+.relatedArticlesSection {
+  margin-bottom: fn.rem(32);
+}
+
+.relatedTitle {
+  font-size: fn.rem(16);
+  font-weight: bold;
+  color: var(--foreground);
+  margin: fn.rem(15) 0;
+}
+
+.relatedList {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: fn.rem(8);
+}
+
+.relatedItem {
+  font-size: fn.rem(14);
+}
+
+.relatedLink {
+  color: var(--primary);
+  text-decoration: none;
+  transition: color 0.2s;
+
+  &:hover {
+    text-decoration: underline;
+    color: #1d4ed8;
+  }
+}
+
+/* 4. Hero Image */
 .heroImageWrapper {
   position: relative;
   width: 100%;
@@ -77,6 +111,7 @@
   }
 }
 
+/* 5. Summary Section */
 .summarySection {
   display: flex;
   gap: fn.rem(48);
@@ -128,6 +163,7 @@
   width: 100%;
 }
 
+/* 6. Summernote Content */
 .summernoteContent {
   color: var(--foreground);
 

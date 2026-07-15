@@ -76,7 +76,6 @@ export default function SearchResultsPage() {
     fetchData();
   }, []);
 
-  // 2. Search Query နှင့် Category Filter ကို အသုံးပြု၍ Articles များကို စစ်ထုတ်ခြင်း
   // Note: Moved this ABOVE the breadcrumb logic so we can use the filtered results to guess the category if needed.
   useEffect(() => {
     let results = allArticles;

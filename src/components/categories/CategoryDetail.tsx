@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import styles from "./CategoryDetail.module.scss";
@@ -29,7 +29,7 @@ const findCategoryPath = (
   return null;
 };
 
-// Keeps the chunk size small so you can see it lazy load your 7 items
+// တစ်မျက်နှာမှာ ပြသမည့် အရေအတွက်
 const ITEMS_PER_PAGE = 3;
 
 export default function CategoryDetail({
@@ -41,15 +41,10 @@ export default function CategoryDetail({
 }) {
   const [allArticles, setAllArticles] = useState<Article[]>([]);
   const [breadcrumbTrail, setBreadcrumbTrail] = useState<DBCategoryNode[]>([]);
-
-  // Loading states
   const [loading, setLoading] = useState(true);
-  const [isFetchingMore, setIsFetchingMore] = useState(false);
 
-  // Lazy load states
-  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
-  const loadMoreRef = useRef<HTMLDivElement | null>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
+  // Pagination အတွက် State
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -83,46 +78,39 @@ export default function CategoryDetail({
     fetchData();
   }, [targetCategory.id]);
 
-  // Intersection Observer for lazy loading items on scroll
-  useEffect(() => {
-    // Clean up previous observer if it exists
-    if (observerRef.current) observerRef.current.disconnect();
-
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        const target = entries[0];
-        if (target.isIntersecting && !isFetchingMore) {
-          setIsFetchingMore(true);
-
-          // Artificial delay of 1.5 seconds to make loading visible
-          setTimeout(() => {
-            setVisibleCount((prevCount) => prevCount + ITEMS_PER_PAGE);
-            setIsFetchingMore(false);
-          }, 1500);
-        }
-      },
-      { threshold: 1.0 }
-    );
-
-    const currentRef = loadMoreRef.current;
-    if (currentRef) {
-      observerRef.current.observe(currentRef);
-    }
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-    };
-  }, [allArticles, isFetchingMore]);
-
-  // Use actual data only (No duplication)
+  // သက်ဆိုင်ရာ Category အတွက် ဆောင်းပါးများ ရွေးထုတ်ခြင်း
   const targetArticles = allArticles.filter(
     (a: Article) => a.category_id === targetCategory.id
   );
 
-  // Slice the articles array to only show the "visible" ones
-  const visibleArticles = targetArticles.slice(0, visibleCount);
+  // Pagination တွက်ချက်မှုများ
+  const totalPages = Math.ceil(targetArticles.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  // လက်ရှိ စာမျက်နှာအတွက် ပြသမည့် ဆောင်းပါးများကိုသာ ဖြတ်ယူခြင်း
+  const visibleArticles = targetArticles.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE
+  );
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // စာမျက်နှာပြောင်းသွားပါက အပေါ်ဆုံးသို့ ပြန်တက်ရန်
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // 1 2 3 ... 10 11 ပုံစံထုတ်ပေးမည့် Logic
+  const generatePagination = (current: number, total: number) => {
+    if (total <= 6) {
+      return Array.from({ length: total }, (_, i) => i + 1);
+    }
+    if (current <= 3) {
+      return [1, 2, 3, "...", total - 1, total];
+    } else if (current >= total - 2) {
+      return [1, 2, "...", total - 2, total - 1, total];
+    } else {
+      return [1, "...", current - 1, current, current + 1, "...", total];
+    }
+  };
 
   const cardBreadcrumbText = breadcrumbTrail
     .map((crumb) => crumb.category_name)
@@ -163,7 +151,6 @@ export default function CategoryDetail({
 
       <div className={styles.headerArea}>
         <h1 className={styles.title}>{targetCategory.category_name} の記事</h1>
-        {/* <div className={styles.date}>更新 : {formattedDate}</div> */}
       </div>
 
       <div className={styles.articleList}>
@@ -218,21 +205,47 @@ export default function CategoryDetail({
               </Link>
             ))}
 
-            {/* Loading trigger element */}
-            {visibleCount < targetArticles.length && (
-              <div
-                ref={loadMoreRef}
-                className={styles.loader}
-                style={{
-                  width: "100%",
-                  textAlign: "center",
-                  padding: "30px 0",
-                  fontWeight: "bold",
-                }}
-              >
-                {isFetchingMore
-                  ? "さらに読み込み中..."
-                  : "スクロールして読み込む"}
+            {totalPages > 1 && (
+              <div className={styles.pagination}>
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter(
+                    (page) =>
+                      page === 1 ||
+                      page === totalPages ||
+                      (page >= currentPage - 1 && page <= currentPage + 1)
+                  )
+                  .map((page, index, array) => {
+                    // ... (ellipsis) အတွက် စစ်ဆေးခြင်း
+                    if (index > 0 && page !== array[index - 1] + 1) {
+                      return (
+                        <React.Fragment key={`ellipsis-${page}`}>
+                          <span className={styles.ellipsis}>...</span>
+                          <button
+                            className={`${styles.pageButton} ${
+                              currentPage === page
+                                ? styles.pageButtonActive
+                                : ""
+                            }`}
+                            onClick={() => handlePageChange(page)}
+                          >
+                            {page}
+                          </button>
+                        </React.Fragment>
+                      );
+                    }
+
+                    return (
+                      <button
+                        key={page}
+                        className={`${styles.pageButton} ${
+                          currentPage === page ? styles.pageButtonActive : ""
+                        }`}
+                        onClick={() => handlePageChange(page)}
+                      >
+                        {page}
+                      </button>
+                    );
+                  })}
               </div>
             )}
           </>

@@ -14,13 +14,17 @@
 .bgcolor {
   background: var(--secondary);
   padding: fn.rem(50) fn.rem(40) fn.rem(50);
+  border-bottom-left-radius: fn.rem(8);
+  border-bottom-right-radius: fn.rem(8);
+  box-shadow: var(--shadow-2xs);
 }
 
 /* 1. Breadcrumb */
 .breadcrumb {
-  font-size: fn.rem(14);
+  padding-top: fn.rem(45);
   color: var(--sidebar-primary-background);
-  margin-bottom: fn.rem(32);
+  font-size: fn.rem(13);
+  margin-bottom: fn.rem(10);
   display: flex;
   flex-wrap: wrap;
   gap: fn.rem(8);
@@ -42,7 +46,7 @@
   }
 
   .current {
-    color: #6b7280;
+    color: var(--foreground);
   }
 }
 

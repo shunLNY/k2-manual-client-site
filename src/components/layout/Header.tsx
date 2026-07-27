@@ -3,9 +3,10 @@ import styles from "./Header.module.scss";
 import Image from "next/image";
 import logo from "../../../public/images/logo.png";
 import logoWhite from "../../../public/images/logo-white.png";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+// ⚠️ useSearchParams ကို အသစ်ထည့်သွင်းထားပါသည်
+import { usePathname, useSearchParams } from "next/navigation";
 import { CategoryNode } from "../../utils/types";
 import SearchBox from "../commons/inputs/SearchBox";
 import { Menu, Moon, Sun } from "lucide-react";
@@ -30,7 +31,9 @@ const findCategoryPath = (
   return null;
 };
 
-export default function Header({ onMenuClick }: HeaderProps) {
+// 🌟 Main Logic များကို HeaderContent သို့ ခွဲထုတ်ထားပါသည်
+function HeaderContent({ onMenuClick }: HeaderProps) {
+  const [isScrolled, setIsScrolled] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(() => {
     if (typeof window !== "undefined") {
       return document.documentElement.classList.contains("dark");
@@ -43,9 +46,27 @@ export default function Header({ onMenuClick }: HeaderProps) {
   const [activeRootId, setActiveRootId] = useState<string | null>(null);
 
   const pathname = usePathname() || "";
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get("tab"); // 👈 URL မှ ?tab= ကို ဖတ်ရန်
+
   const isHomePage = pathname === "/";
+  const isArticlePage = pathname.includes("/articles/"); // 👈 Article Page ဟုတ်မဟုတ် စစ်ရန်
   const idMatch = pathname.match(/\/category\/([^\/]+)/);
   const currentCategoryId = idMatch ? idMatch[1] : null;
+
+  // 🌟 Scroll Event ကို နားထောင်မည့် useEffect အသစ်
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     fetch("http://localhost:4000/categories")
@@ -96,12 +117,20 @@ export default function Header({ onMenuClick }: HeaderProps) {
     }
   }, [currentCategoryId, categories, isHomePage]);
 
-  const isSiteActive = siteRootId
-    ? pathname.includes(siteRootId) || activeRootId === siteRootId
-    : false;
-  const isSalesActive = salesRootId
-    ? pathname.includes(salesRootId) || activeRootId === salesRootId
-    : false;
+  // 🌟 Article Page ဖြစ်ပါက URL query ပေါ်မူတည်၍ Active Tab ကို သတ်မှတ်ပါမည်
+  const isSiteActive =
+    isArticlePage && tabParam
+      ? tabParam === "site"
+      : siteRootId
+      ? pathname.includes(siteRootId) || activeRootId === siteRootId
+      : false;
+
+  const isSalesActive =
+    isArticlePage && tabParam
+      ? tabParam === "sales"
+      : salesRootId
+      ? pathname.includes(salesRootId) || activeRootId === salesRootId
+      : false;
 
   const toggleTheme = () => {
     if (isDarkMode) {
@@ -116,7 +145,11 @@ export default function Header({ onMenuClick }: HeaderProps) {
   };
 
   return (
-    <header className={styles.headerWrapper}>
+    <header
+      className={`${styles.headerWrapper} ${
+        isScrolled ? styles.isScrolled : ""
+      }`}
+    >
       <div className={styles.topBar}>
         <button className={styles.hamburgerBtn} onClick={onMenuClick}>
           <Menu size={24} />
@@ -174,5 +207,20 @@ export default function Header({ onMenuClick }: HeaderProps) {
 
       {!isHomePage && <SearchBox />}
     </header>
+  );
+}
+
+// ⚠️ Next.js Client Component တွင် useSearchParams အသုံးပြုရန် Suspense ဖြင့် ဝန်းရံပေးရပါသည်
+export default function Header(props: HeaderProps) {
+  return (
+    <Suspense
+      fallback={
+        <header className={styles.headerWrapper}>
+          <div className={styles.topBar}>Loading...</div>
+        </header>
+      }
+    >
+      <HeaderContent {...props} />
+    </Suspense>
   );
 }

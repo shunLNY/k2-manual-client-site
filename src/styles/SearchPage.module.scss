@@ -4,8 +4,7 @@
 @use "../styles/mixins" as mixin;
 
 .container {
-  padding: 0 fn.rem(48);
-  background-color: #f4f5f7;
+  padding: fn.rem(45) fn.rem(48) 0;
   min-height: 100vh;
 
   @include mixin.sm() {
@@ -15,10 +14,7 @@
 
 /* Breadcrumb Navigation */
 .breadcrumb {
-  font-size: fn.rem(14);
-  padding-bottom: fn.rem(20);
-  color: #6b7280;
-
+  font-size: fn.rem(13);
   .link {
     color: var(--primary);
     text-decoration: none;
@@ -30,11 +26,6 @@
   .separator {
     color: #9ca3af;
     padding: 0 fn.rem(4);
-  }
-
-  .activeStep {
-    color: #374151;
-    font-weight: 500;
   }
 }
 
@@ -55,13 +46,16 @@
 .title {
   font-size: fn.rem(28);
   font-weight: bold;
-  color: #222;
+  color: var(--header-color);
   margin: 0;
+  @include mixin.sm() {
+    font-size: fn.rem(22);
+  }
 }
 
 .date {
   font-size: fn.rem(16);
-  color: #555;
+  color: var(--foreground);
   font-weight: 500;
 }
 
@@ -76,7 +70,7 @@
 /* Article Card Base */
 .articleCard {
   display: flex;
-  background-color: #ffffff;
+  background-color: var(--header-background);
   border-radius: fn.rem(8);
   overflow: hidden;
   text-decoration: none;
@@ -119,6 +113,7 @@
 /* Card Content Details */
 .cardContent {
   padding: fn.rem(24);
+  color: var(--sidebar-color);
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -126,24 +121,24 @@
 
 .cardBreadcrumb {
   font-size: fn.rem(12);
-  color: #6b7280;
   margin-bottom: fn.rem(8);
 }
 
 .cardTitle {
   font-size: fn.rem(20);
   font-weight: bold;
-  color: #111827;
   margin: 0 0 fn.rem(12) 0;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  line-height: 1.6;
+  display: -webkit-box;
+  overflow: hidden;
 }
 
 .cardDescription {
   font-size: fn.rem(14);
-  color: #4b5563;
   line-height: 1.6;
   margin: 0;
-
-  /* စာသား ၂ ကြောင်းထက်ကျော်ပါက '...' ဖြင့် ဖြတ်တောက်ရန် (Line Clamp) */
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -164,4 +159,59 @@
   background-color: #ffffff;
   border-radius: fn.rem(8);
   border: 1px solid #e5e7eb;
+}
+
+/* =========================================
+   Pagination Styles (အသစ်ထည့်သွင်းထားသည်)
+========================================= */
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: fn.rem(8);
+  margin-top: fn.rem(40);
+  padding: fn.rem(20) 0;
+}
+
+.pageButton {
+  width: fn.rem(40);
+  height: fn.rem(40);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 1px solid var(--sidebar-primary-background);
+  color: var(--sidebar-primary-background);
+  background: var(--background);
+  border-radius: fn.rem(3);
+  font-size: fn.rem(16);
+  font-weight: 500;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background-color: var(--primary);
+    color: #fff;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+.pageButtonActive {
+  background: var(--sidebar-primary-background);
+  color: var(--background);
+  border-color: var(--sidebar-primary-background);
+}
+
+.ellipsis {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fn.rem(48);
+  font-size: fn.rem(20);
+  color: #111827;
+  letter-spacing: fn.rem(2);
 }

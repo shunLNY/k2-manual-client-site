@@ -5,7 +5,7 @@
 .sidebar {
   width: fn.rem(256);
   background-color: var(--background, #f4f5f7);
-  border-right: 1px solid var(--sidebar-border, #e5e7eb);
+  border-right: 1px solid var(--border);
   display: block;
   // height: 100vh;
   position: relative;
@@ -16,12 +16,22 @@
     position: fixed;
     top: 0;
     left: fn.rem(-300);
-    z-index: 1000;
+    z-index: 10000;
     transition: left 0.3s ease;
     height: 100vh;
+    width: fn.rem(256);
 
     &.isOpen {
       left: 0;
+      width: 100%;
+    }
+
+    &.isCollapsed {
+      width: fn.rem(256);
+      .sidebarContent {
+        opacity: 1;
+        visibility: visible;
+      }
     }
   }
 
@@ -32,13 +42,6 @@
     .sidebarContent {
       opacity: 0;
       visibility: hidden;
-    }
-
-    .toggleBtn {
-      right: fn.rem(-28);
-      background-color: var(--primary);
-      color: #fff;
-      border-color: var(--primary);
     }
   }
 }
@@ -53,6 +56,7 @@
   white-space: nowrap;
   @include mixin.sm() {
     padding-top: fn.rem(50);
+    width: 100%;
   }
 }
 
@@ -60,18 +64,19 @@
 .toggleBtn {
   position: absolute;
   top: fn.rem(24);
-  right: fn.rem(-14);
-  width: fn.rem(28);
-  height: fn.rem(28);
-  background-color: #ffffff;
-  border: 1px solid var(--sidebar-border, #e5e7eb);
-  border-radius: 50%;
+  right: fn.rem(-24);
+  width: fn.rem(24);
+  height: fn.rem(72);
+  background-color: var(--list-header-background);
+  border: 1px solid var(--border);
+  border-left: none;
+  border-radius: 0 fn.rem(8) fn.rem(8) 0;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   z-index: 50;
-  color: #64748b;
+  color: var(--sidebar-primary-background);
   box-shadow: var(--shadow-2xs);
   transition: all 0.3s ease;
 
@@ -128,7 +133,7 @@
 }
 
 .rootChevron {
-  color: #64748b;
+  color: var(--sidebar-primary-background);
   display: flex;
   align-items: center;
 }
@@ -152,7 +157,6 @@
   font-size: fn.rem(15);
   color: #334155;
   cursor: pointer;
-  border-radius: fn.rem(6);
   transition: color 0.2s, background-color 0.2s;
   user-select: none;
 
@@ -167,7 +171,7 @@
   justify-content: center;
   width: fn.rem(20);
   height: fn.rem(20);
-  color: #94a3b8;
+  color: var(--sidebar-primary-background);
 }
 
 .linkText {
@@ -181,8 +185,14 @@
 
 .activeText {
   color: var(--primary);
+  background-color: rgba(var(--primary-rgb), 0.2);
+  border-left: 3px solid var(--primary);
 
   .iconBox {
+    color: var(--primary);
+  }
+
+  .linkText {
     color: var(--primary);
   }
 }

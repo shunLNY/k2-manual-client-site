@@ -31,6 +31,9 @@ const findCategoryPath = (
   return null;
 };
 
+// Define how many items you want per page
+const ITEMS_PER_PAGE = 3;
+
 export default function SearchResultsPage() {
   const router = useRouter();
   const { q, category_id, cid } = router.query;
@@ -49,7 +52,9 @@ export default function SearchResultsPage() {
   const [breadcrumbTrail, setBreadcrumbTrail] = useState<DBCategoryNode[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // 1. API သို့မဟုတ် Database မှ ဒေတာများ ဆွဲယူခြင်း
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -76,7 +81,6 @@ export default function SearchResultsPage() {
     fetchData();
   }, []);
 
-  // Note: Moved this ABOVE the breadcrumb logic so we can use the filtered results to guess the category if needed.
   useEffect(() => {
     let results = allArticles;
 
@@ -97,8 +101,9 @@ export default function SearchResultsPage() {
       });
     }
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setFilteredArticles(results);
+    // Reset to page 1 whenever the search query or category filter changes
+    setCurrentPage(1);
   }, [searchQuery, targetCategoryId, allArticles]);
 
   useEffect(() => {
@@ -117,7 +122,6 @@ export default function SearchResultsPage() {
     if (activeCategoryId && categories.length > 0) {
       const path = findCategoryPath(categories, activeCategoryId);
       if (path) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setBreadcrumbTrail(path);
       } else {
         setBreadcrumbTrail([]);
@@ -126,6 +130,19 @@ export default function SearchResultsPage() {
       setBreadcrumbTrail([]);
     }
   }, [targetCategoryId, categories, filteredArticles]);
+
+  // --- Pagination Calculations ---
+  const totalPages = Math.ceil(filteredArticles.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const visibleArticles = filteredArticles.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE
+  );
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   if (loading) {
     return (
@@ -174,64 +191,112 @@ export default function SearchResultsPage() {
       {/* Articles List */}
       <div className={styles.articleList}>
         {filteredArticles.length > 0 ? (
-          filteredArticles.map((article: Article) => {
-            const cardTrail = findCategoryPath(
-              categories,
-              article.category_id || ""
-            );
-            const cardBreadcrumbText = cardTrail
-              ? cardTrail.map((crumb) => crumb.category_name).join(" ＞ ")
-              : article.category_name || "未分類";
+          <>
+            {/* Map over visibleArticles instead of filteredArticles */}
+            {visibleArticles.map((article: Article) => {
+              const cardTrail = findCategoryPath(
+                categories,
+                article.category_id || ""
+              );
+              const cardBreadcrumbText = cardTrail
+                ? cardTrail.map((crumb) => crumb.category_name).join(" ＞ ")
+                : article.category_name || "未分類";
 
-            return (
-              <Link
-                href={`/articles/${article.id}`}
-                key={article.id}
-                className={styles.articleCard}
-              >
-                <div className={styles.imageContainer}>
-                  <Image
-                    src={getImageUrl(article.thumbnail_path)}
-                    alt={article.title}
-                    fill
-                    className={styles.articleImage}
-                    sizes="(max-width: 768px) 100vw, 280px"
-                    onError={(e) => {
-                      e.currentTarget.src = "/placeholder-image.jpg";
-                      e.currentTarget.srcset = "";
-                    }}
-                  />
-                </div>
-
-                <div className={styles.cardContent}>
-                  <div className={styles.cardBreadcrumb}>
-                    {cardBreadcrumbText}
+              return (
+                <Link
+                  href={`/articles/${article.id}`}
+                  key={article.id}
+                  className={styles.articleCard}
+                >
+                  <div className={styles.imageContainer}>
+                    <Image
+                      src={getImageUrl(article.thumbnail_path)}
+                      alt={article.title}
+                      fill
+                      className={styles.articleImage}
+                      sizes="(max-width: 768px) 100vw, 280px"
+                      onError={(e) => {
+                        e.currentTarget.src = "/placeholder-image.jpg";
+                        e.currentTarget.srcset = "";
+                      }}
+                    />
                   </div>
 
-                  <h2 className={styles.cardTitle}>{article.title}</h2>
+                  <div className={styles.cardContent}>
+                    <div className={styles.cardBreadcrumb}>
+                      {cardBreadcrumbText}
+                    </div>
 
-                  <p className={styles.cardDescription}>
-                    {article.excerpt ||
-                      article.summary ||
-                      "記事の詳細プレビューテキストがここに表示されます。"}
-                  </p>
+                    <h2 className={styles.cardTitle}>{article.title}</h2>
 
-                  <div className={styles.cardDate}>
-                    {article.updatedAt
-                      ? new Date(article.updatedAt).toLocaleDateString(
-                          "en-US",
-                          {
-                            month: "long",
-                            day: "numeric",
-                            year: "numeric",
-                          }
-                        )
-                      : "June 25, 2026"}
+                    <p className={styles.cardDescription}>
+                      {article.excerpt ||
+                        article.summary ||
+                        "記事の詳細プレビューテキストがここに表示されます。"}
+                    </p>
+
+                    <div className={styles.cardDate}>
+                      {article.updatedAt
+                        ? new Date(article.updatedAt).toLocaleDateString(
+                            "en-US",
+                            {
+                              month: "long",
+                              day: "numeric",
+                              year: "numeric",
+                            }
+                          )
+                        : "June 25, 2026"}
+                    </div>
                   </div>
-                </div>
-              </Link>
-            );
-          })
+                </Link>
+              );
+            })}
+
+            {/* Pagination UI */}
+            {totalPages > 1 && (
+              <div className={styles.pagination}>
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter(
+                    (page) =>
+                      page === 1 ||
+                      page === totalPages ||
+                      (page >= currentPage - 1 && page <= currentPage + 1)
+                  )
+                  .map((page, index, array) => {
+                    // Inject ellipsis (...) if there's a gap in the page numbers
+                    if (index > 0 && page !== array[index - 1] + 1) {
+                      return (
+                        <React.Fragment key={`ellipsis-${page}`}>
+                          <span className={styles.ellipsis}>...</span>
+                          <button
+                            className={`${styles.pageButton} ${
+                              currentPage === page
+                                ? styles.pageButtonActive
+                                : ""
+                            }`}
+                            onClick={() => handlePageChange(page)}
+                          >
+                            {page}
+                          </button>
+                        </React.Fragment>
+                      );
+                    }
+
+                    return (
+                      <button
+                        key={page}
+                        className={`${styles.pageButton} ${
+                          currentPage === page ? styles.pageButtonActive : ""
+                        }`}
+                        onClick={() => handlePageChange(page)}
+                      >
+                        {page}
+                      </button>
+                    );
+                  })}
+              </div>
+            )}
+          </>
         ) : (
           <p className={styles.emptyText}>
             該当する記事が見つかりませんでした。

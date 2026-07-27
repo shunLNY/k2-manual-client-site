@@ -4,7 +4,7 @@
 @use "../../styles/mixins" as mixin;
 
 .container {
-  padding: 0 fn.rem(48);
+  padding: fn.rem(45) fn.rem(48) 0;
   min-height: 100vh;
 
   a {
@@ -14,6 +14,11 @@
   @include mixin.sm() {
     padding: 0;
   }
+}
+
+.breadcrumb {
+  font-size: fn.rem(13);
+  margin-bottom: fn.rem(10);
 }
 
 .headerArea {
@@ -49,13 +54,13 @@
 
 .articleCard {
   display: flex;
-  background-color: #ffffff;
+  background-color: var(--header-background);
   border-radius: fn.rem(8);
   overflow: hidden;
   text-decoration: none;
   color: inherit;
   box-shadow: var(--shadow-2xs);
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border);
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 
   &:hover {
@@ -90,6 +95,7 @@
 }
 
 .cardContent {
+  color: var(--sidebar-color);
   padding: fn.rem(24);
   display: flex;
   flex-direction: column;
@@ -98,14 +104,12 @@
 
 .cardBreadcrumb {
   font-size: fn.rem(12);
-  color: #6b7280;
   margin-bottom: fn.rem(8);
 }
 
 .cardTitle {
   font-size: fn.rem(20);
   font-weight: bold;
-  color: #111827;
   margin: 0 0 fn.rem(12) 0;
   line-height: 1.4;
   -webkit-line-clamp: 1;
@@ -116,11 +120,9 @@
 
 .cardDescription {
   font-size: fn.rem(14);
-  color: #4b5563;
   margin: 0;
   line-height: 1.6;
-  min-height: calc(fn.rem(14) * 1.6 * 2);
-
+  // min-height: calc(fn.rem(14) * 1.6 * 2);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -160,16 +162,17 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  background-color: #ffffff;
-  color: #111827;
-  border: 1px solid #d1d5db;
-  border-radius: fn.rem(8);
+  border: 1px solid var(--sidebar-primary-background);
+  color: var(--sidebar-primary-background);
+  background: var(--background);
+  border-radius: fn.rem(3);
   font-size: fn.rem(16);
   font-weight: 500;
   transition: all 0.2s ease;
 
   &:hover:not(:disabled) {
-    border-color: var(--primary);
+    background-color: var(--primary);
+    color: #fff;
   }
 
   &:disabled {
@@ -179,9 +182,9 @@
 }
 
 .pageButtonActive {
-  background-color: var(--primary);
-  color: #ffffff;
-  border-color: var(--primary);
+  background: var(--sidebar-primary-background);
+  color: var(--background);
+  border-color: var(--sidebar-primary-background);
 }
 
 .ellipsis {

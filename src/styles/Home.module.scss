@@ -27,7 +27,7 @@
   color: var(--foreground);
   margin-bottom: fn.rem(24);
   border-top: 1px solid var(--border);
-  padding-top: fn.rem(48);
+  padding-top: fn.rem(30);
 
   @include mixin.sm() {
     font-size: fn.rem(16);

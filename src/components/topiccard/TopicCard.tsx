@@ -35,12 +35,33 @@ export default function TopicCard({ topic }: TopicCardProps) {
     return category.category_name || "";
   };
 
+  // ⚠️ ယခင်က ကျန်ခဲ့သော သို့မဟုတ် နေရာလွဲနေသော Function (ဒီနေရာမှာ ရှိရပါမည်)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const getRootCategoryName = (category: any): string => {
+    if (!category) return "";
+    if (category.parentCategory) {
+      return getRootCategoryName(category.parentCategory);
+    }
+    return category.category_name || "";
+  };
+
   const fullCategoryPath = topic.category
     ? getCategoryPath(topic.category)
     : topic.category_name || "";
 
+  // Main Category ရှာပြီး URL Query ပါအောင် ထည့်ခြင်း
+  const rootCategoryName = topic.category
+    ? getRootCategoryName(topic.category)
+    : "";
+  let tabQuery = "";
+  if (rootCategoryName === "現場管理") {
+    tabQuery = "?tab=site";
+  } else if (rootCategoryName === "販売管理") {
+    tabQuery = "?tab=sales";
+  }
+
   return (
-    <Link href={`/articles/${topic.id}`} className={styles.card}>
+    <Link href={`/articles/${topic.id}${tabQuery}`} className={styles.card}>
       <div className={styles.cardImageContainer}>
         <Image
           src={imgSrc}

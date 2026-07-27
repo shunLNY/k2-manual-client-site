@@ -1,14 +1,13 @@
 .card {
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border);
   border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
-  background-color: var(--primary-foreground);
+  background-color: var(--header-background);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   box-shadow: var(--shadow-2xs);
   display: flex;
   flex-direction: row;
-  height: 180px;
 }
 
 .card:hover {
@@ -27,7 +26,7 @@
 
 .cardcontent {
   padding: 1.25rem;
-  background-color: transparent;
+  color: var(--sidebar-color);
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -36,7 +35,6 @@
 
 .category {
   font-size: 0.75rem;
-  color: #64748b;
   margin-top: 0;
   margin-bottom: 0.75rem;
 }
@@ -50,7 +48,6 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 0.5rem;
-  color: var(--theme-text-main, #1e293b);
   line-height: 1.4;
 }
 
@@ -63,7 +60,6 @@
 
 .excerpt {
   font-size: 0.85rem;
-  color: var(--theme-text-muted, #5e6b82);
   line-height: 1.6;
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -75,7 +71,7 @@
 
 .date {
   font-size: 0.8rem;
-  color: #94a3b8;
   margin-bottom: 0;
   margin-top: auto;
+  padding-top: 8px;
 }

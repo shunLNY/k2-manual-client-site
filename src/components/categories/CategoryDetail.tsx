@@ -29,7 +29,6 @@ const findCategoryPath = (
   return null;
 };
 
-// တစ်မျက်နှာမှာ ပြသမည့် အရေအတွက်
 const ITEMS_PER_PAGE = 3;
 
 export default function CategoryDetail({
@@ -42,8 +41,6 @@ export default function CategoryDetail({
   const [allArticles, setAllArticles] = useState<Article[]>([]);
   const [breadcrumbTrail, setBreadcrumbTrail] = useState<DBCategoryNode[]>([]);
   const [loading, setLoading] = useState(true);
-
-  // Pagination အတွက် State
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
@@ -78,15 +75,12 @@ export default function CategoryDetail({
     fetchData();
   }, [targetCategory.id]);
 
-  // သက်ဆိုင်ရာ Category အတွက် ဆောင်းပါးများ ရွေးထုတ်ခြင်း
   const targetArticles = allArticles.filter(
     (a: Article) => a.category_id === targetCategory.id
   );
 
-  // Pagination တွက်ချက်မှုများ
   const totalPages = Math.ceil(targetArticles.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  // လက်ရှိ စာမျက်နှာအတွက် ပြသမည့် ဆောင်းပါးများကိုသာ ဖြတ်ယူခြင်း
   const visibleArticles = targetArticles.slice(
     startIndex,
     startIndex + ITEMS_PER_PAGE
@@ -94,11 +88,9 @@ export default function CategoryDetail({
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    // စာမျက်နှာပြောင်းသွားပါက အပေါ်ဆုံးသို့ ပြန်တက်ရန်
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // 1 2 3 ... 10 11 ပုံစံထုတ်ပေးမည့် Logic
   const generatePagination = (current: number, total: number) => {
     if (total <= 6) {
       return Array.from({ length: total }, (_, i) => i + 1);
@@ -215,7 +207,6 @@ export default function CategoryDetail({
                       (page >= currentPage - 1 && page <= currentPage + 1)
                   )
                   .map((page, index, array) => {
-                    // ... (ellipsis) အတွက် စစ်ဆေးခြင်း
                     if (index > 0 && page !== array[index - 1] + 1) {
                       return (
                         <React.Fragment key={`ellipsis-${page}`}>

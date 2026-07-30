@@ -17,9 +17,8 @@
   transition: box-shadow 0.3s ease;
 }
 
-// သတိပြုရန် - Dark mode သုံးထားပါက .headerWrapper ၏ background-color ကို အောက်ပါအတိုင်း တွဲရေးပေးပါ။
 :global(.dark) .headerWrapper {
-  background-color: #1a1a1a; // သင့် Dark Mode အရောင်
+  background-color: #1a1a1a;
 }
 
 .topBar {
@@ -49,9 +48,9 @@
   cursor: pointer;
   margin-left: auto;
 
-  @include mixin.sm() {
-    display: none;
-  }
+  // @include mixin.sm() {
+  //   display: none;
+  // }
 }
 
 .logoContainer {

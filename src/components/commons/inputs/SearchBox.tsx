@@ -276,10 +276,10 @@ export default function SearchBox() {
                     activeMobileTab !== "categories" ? styles.hideOnMobile : ""
                   }`}
                 >
-                  <h3 className={styles.columnHeader}>Matching Categories</h3>
+                  <h3 className={styles.columnHeader}>該当するカテゴリー</h3>
                   <p className={styles.resultCount}>
-                    Found <strong>{filteredResults.categories.length}</strong>{" "}
-                    related results
+                    該当結果{" "}
+                    <strong>{filteredResults.categories.length}</strong> 件
                   </p>
                   <div className={styles.listContainer}>
                     {filteredResults.categories.length > 0 ? (
@@ -310,13 +310,13 @@ export default function SearchBox() {
                 >
                   <div className={styles.articleHeaderRow}>
                     <div>
-                      <h3 className={styles.columnHeader}>Matching Articles</h3>
+                      <h3 className={styles.columnHeader}>該当する記事</h3>
                       <p className={styles.resultCount}>
-                        Displaying{" "}
+                        関連結果：{" "}
                         <strong>
                           {Math.min(filteredResults.articles.length, 3)}
                         </strong>{" "}
-                        of {filteredResults.articles.length} related results
+                        件（全{filteredResults.articles.length}件）
                       </p>
                     </div>
                     {filteredResults.articles.length > 3 && (
@@ -324,7 +324,7 @@ export default function SearchBox() {
                         className={styles.viewAllBtn}
                         onClick={handleViewAll}
                       >
-                        View All
+                        もっと見る
                       </button>
                     )}
                   </div>
@@ -378,9 +378,7 @@ export default function SearchBox() {
                         </div>
                       ))
                     ) : (
-                      <p className={styles.noResultsText}>
-                        No matching articles found
-                      </p>
+                      <p className={styles.noResultsText}>該当する記事 found</p>
                     )}
                   </div>
                 </div>

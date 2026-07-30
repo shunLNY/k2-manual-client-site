@@ -35,7 +35,6 @@ export default function TopicCard({ topic }: TopicCardProps) {
     return category.category_name || "";
   };
 
-  // ⚠️ ယခင်က ကျန်ခဲ့သော သို့မဟုတ် နေရာလွဲနေသော Function (ဒီနေရာမှာ ရှိရပါမည်)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const getRootCategoryName = (category: any): string => {
     if (!category) return "";
@@ -49,7 +48,6 @@ export default function TopicCard({ topic }: TopicCardProps) {
     ? getCategoryPath(topic.category)
     : topic.category_name || "";
 
-  // Main Category ရှာပြီး URL Query ပါအောင် ထည့်ခြင်း
   const rootCategoryName = topic.category
     ? getRootCategoryName(topic.category)
     : "";

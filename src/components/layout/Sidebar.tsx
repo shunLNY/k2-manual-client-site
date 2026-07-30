@@ -3,14 +3,12 @@
 "use client";
 
 import React, { useEffect, useState, Suspense } from "react";
-// ⚠️ useSearchParams ကို အသစ်ထည့်သွင်းထားပါသည်
 import { usePathname, useSearchParams } from "next/navigation";
 import styles from "./Sidebar.module.scss";
 import Link from "next/link";
-import { SubCategory, MainCategory } from "../../utils/types";
+import { MainCategory } from "../../utils/types";
 import { Folder, ChevronRight, Circle, ChevronLeft, X } from "lucide-react";
 
-// ... (SidebarProps, isIdInTree, TreeNode တို့သည် မူလအတိုင်းဖြစ်ပါသည်) ...
 interface SidebarProps {
   isOpen?: boolean;
   onClose: () => void;
@@ -92,22 +90,16 @@ const TreeNode = ({
   );
 };
 
-// SearchParams ကို ဖတ်ရန် သီးသန့် Component ခွဲထုတ်ခြင်း (Next.js Client Component တွင် Error မတက်စေရန်)
 function SidebarContent({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const tabParam = searchParams.get("tab"); // 👈 URL က ?tab=... ကို ဖတ်ပါမည်
+  const tabParam = searchParams.get("tab");
 
-  const [siteRootId, setSiteRootId] = useState<string | null>(null);
-  const [salesRootId, setSalesRootId] = useState<string | null>(null);
-  const [siteChildren, setSiteChildren] = useState<SubCategory[]>([]);
-  const [salesChildren, setSalesChildren] = useState<SubCategory[]>([]);
+  const [rootCategories, setRootCategories] = useState<MainCategory[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const [siteOpen, setSiteOpen] = useState(false);
-  const [salesOpen, setSalesOpen] = useState(false);
+  const [openStates, setOpenStates] = useState<Record<string, boolean>>({});
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [activeTab, setActiveTab] = useState<string | null>(null);
+  const [activeRootId, setActiveRootId] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("http://localhost:4000/categories")
@@ -119,32 +111,11 @@ function SidebarContent({ isOpen, onClose }: SidebarProps) {
             : Array.isArray(response)
             ? response
             : [];
-        const siteData = rawData.find(
-          (c) =>
-            c.category_slug?.toLowerCase() === "genbakanri" ||
-            c.category_name === "現場管理"
+
+        const sortedData = rawData.sort(
+          (a, b) => (a.sort_order || 0) - (b.sort_order || 0)
         );
-        if (siteData) {
-          setSiteRootId(siteData.id);
-          if (siteData.children)
-            setSiteChildren(
-              [...siteData.children].sort((a, b) => a.sort_order - b.sort_order)
-            );
-        }
-        const salesData = rawData.find(
-          (c) =>
-            c.category_slug?.toLowerCase() === "hanbaikanri" ||
-            c.category_name === "販売管理"
-        );
-        if (salesData) {
-          setSalesRootId(salesData.id);
-          if (salesData.children)
-            setSalesChildren(
-              [...salesData.children].sort(
-                (a, b) => a.sort_order - b.sort_order
-              )
-            );
-        }
+        setRootCategories(sortedData);
         setLoading(false);
       })
       .catch((err) => {
@@ -154,54 +125,44 @@ function SidebarContent({ isOpen, onClose }: SidebarProps) {
   }, []);
 
   useEffect(() => {
-    if (loading || (!siteRootId && !salesRootId)) return;
+    if (loading || rootCategories.length === 0) return;
+
     const segments = pathname.split("/");
     const currentId = segments[segments.length - 1];
 
-    // 🌟 Article Detail Page ရောက်နေရင် Query Parameter ကို စစ်ပါမယ်
+    let newActiveRootId: string | null = null;
+    // eslint-disable-next-line prefer-const
+    let newOpenStates = { ...openStates };
+
     if (pathname.includes("/articles/") && tabParam) {
-      if (tabParam === "site") {
-        setActiveTab("site");
-        setSiteOpen(true);
-        setSalesOpen(false);
-      } else if (tabParam === "sales") {
-        setActiveTab("sales");
-        setSalesOpen(true);
-        setSiteOpen(false);
+      const matchedRoot = rootCategories.find(
+        (c) => c.category_slug === tabParam
+      );
+      if (matchedRoot) {
+        newActiveRootId = matchedRoot.id;
+        newOpenStates[matchedRoot.id] = true;
       }
-      return;
+    } else if (currentId) {
+      for (const root of rootCategories) {
+        if (
+          currentId === root.id ||
+          (root.children && isIdInTree(currentId, root.children))
+        ) {
+          newActiveRootId = root.id;
+          newOpenStates[root.id] = true;
+          break;
+        }
+      }
     }
 
-    // မူလအတိုင်း Category Page များကို စစ်ခြင်း
-    if (currentId) {
-      if (currentId === siteRootId || isIdInTree(currentId, siteChildren)) {
-        setActiveTab("site");
-        setSiteOpen(true);
-        setSalesOpen(false);
-      } else if (
-        currentId === salesRootId ||
-        isIdInTree(currentId, salesChildren)
-      ) {
-        setActiveTab("sales");
-        setSalesOpen(true);
-        setSiteOpen(false);
-      } else {
-        setActiveTab(null);
-        setSiteOpen(false);
-        setSalesOpen(false);
-      }
-    } else {
-      setActiveTab(null);
-    }
-  }, [
-    pathname,
-    tabParam,
-    siteRootId,
-    salesRootId,
-    siteChildren,
-    salesChildren,
-    loading,
-  ]);
+    setActiveRootId(newActiveRootId);
+    setOpenStates((prev) => ({ ...prev, ...newOpenStates }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname, tabParam, rootCategories, loading]);
+
+  const toggleFolder = (id: string) => {
+    setOpenStates((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
 
   if (loading)
     return (
@@ -238,109 +199,71 @@ function SidebarContent({ isOpen, onClose }: SidebarProps) {
       </button>
 
       <div className={styles.sidebarContent}>
-        {(activeTab === null || activeTab === "site") && (
-          <div className={styles.section}>
-            <div
-              className={styles.rootHeader}
-              onClick={() => setSiteOpen(!siteOpen)}
-            >
-              <Folder size={18} fill="currentColor" stroke="none" />
-              <span className={styles.rootTitle}>
-                {siteRootId ? (
-                  <Link
-                    href={`/category/${siteRootId}`}
-                    onClick={(e) => e.stopPropagation()}
-                    style={{ textDecoration: "none", color: "inherit" }}
-                  >
-                    現場管理
-                  </Link>
-                ) : (
-                  "現場管理"
-                )}
-              </span>
-              <div className={styles.rootChevron}>
-                <ChevronRight
-                  size={18}
-                  style={{
-                    transform: siteOpen ? "rotate(90deg)" : "rotate(0deg)",
-                    transition: "transform 0.2s ease",
-                  }}
-                />
-              </div>
-            </div>
-            {siteOpen && (
-              <ul className={styles.rootChildren}>
-                {siteChildren.length > 0 ? (
-                  siteChildren.map((item) => (
-                    <TreeNode
-                      key={item.id}
-                      item={item}
-                      pathname={pathname}
-                      onClose={onClose}
-                    />
-                  ))
-                ) : (
-                  <li className={styles.emptyItem}>※ 現場管理 no data</li>
-                )}
-              </ul>
-            )}
-          </div>
-        )}
+        {rootCategories.map((rootCat) => {
+          if (activeRootId !== null && activeRootId !== rootCat.id) return null;
 
-        {(activeTab === null || activeTab === "sales") && (
-          <div className={styles.section}>
-            <div
-              className={styles.rootHeader}
-              onClick={() => setSalesOpen(!salesOpen)}
-            >
-              <Folder size={18} fill="currentColor" stroke="none" />
-              <span className={styles.rootTitle}>
-                {salesRootId ? (
+          const isFolderOpen = !!openStates[rootCat.id];
+          const children = rootCat.children
+            ? [...rootCat.children].sort(
+                (a, b) => (a.sort_order || 0) - (b.sort_order || 0)
+              )
+            : [];
+
+          return (
+            <div key={rootCat.id} className={styles.section}>
+              <div
+                className={styles.rootHeader}
+                onClick={() => toggleFolder(rootCat.id)}
+              >
+                <Folder size={18} fill="currentColor" stroke="none" />
+                <span className={styles.rootTitle}>
                   <Link
-                    href={`/category/${salesRootId}`}
+                    href={`/category/${rootCat.id}`}
                     onClick={(e) => e.stopPropagation()}
                     style={{ textDecoration: "none", color: "inherit" }}
                   >
-                    販売管理
+                    {rootCat.category_name}
                   </Link>
-                ) : (
-                  "販売管理"
-                )}
-              </span>
-              <div className={styles.rootChevron}>
-                <ChevronRight
-                  size={18}
-                  style={{
-                    transform: salesOpen ? "rotate(90deg)" : "rotate(0deg)",
-                    transition: "transform 0.2s ease",
-                  }}
-                />
+                </span>
+                <div className={styles.rootChevron}>
+                  <ChevronRight
+                    size={18}
+                    style={{
+                      transform: isFolderOpen
+                        ? "rotate(90deg)"
+                        : "rotate(0deg)",
+                      transition: "transform 0.2s ease",
+                    }}
+                  />
+                </div>
               </div>
+
+              {isFolderOpen && (
+                <ul className={styles.rootChildren}>
+                  {children.length > 0 ? (
+                    children.map((item) => (
+                      <TreeNode
+                        key={item.id}
+                        item={item}
+                        pathname={pathname}
+                        onClose={onClose}
+                      />
+                    ))
+                  ) : (
+                    <li className={styles.emptyItem}>
+                      ※ {rootCat.category_name} no data
+                    </li>
+                  )}
+                </ul>
+              )}
             </div>
-            {salesOpen && (
-              <ul className={styles.rootChildren}>
-                {salesChildren.length > 0 ? (
-                  salesChildren.map((item) => (
-                    <TreeNode
-                      key={item.id}
-                      item={item}
-                      pathname={pathname}
-                      onClose={onClose}
-                    />
-                  ))
-                ) : (
-                  <li className={styles.emptyItem}>※ 販売管理 no data</li>
-                )}
-              </ul>
-            )}
-          </div>
-        )}
+          );
+        })}
       </div>
     </aside>
   );
 }
 
-// ⚠️ Next.js Client Component တွင် useSearchParams အသုံးပြုရန် Suspense ဖြင့် ဝန်းရံပေးရပါသည်
 export default function Sidebar(props: SidebarProps) {
   return (
     <Suspense

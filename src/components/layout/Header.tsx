@@ -5,7 +5,6 @@ import logo from "../../../public/images/logo.png";
 import logoWhite from "../../../public/images/logo-white.png";
 import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
-// ⚠️ useSearchParams ကို အသစ်ထည့်သွင်းထားပါသည်
 import { usePathname, useSearchParams } from "next/navigation";
 import { CategoryNode } from "../../utils/types";
 import SearchBox from "../commons/inputs/SearchBox";
@@ -31,7 +30,6 @@ const findCategoryPath = (
   return null;
 };
 
-// 🌟 Main Logic များကို HeaderContent သို့ ခွဲထုတ်ထားပါသည်
 function HeaderContent({ onMenuClick }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -40,28 +38,23 @@ function HeaderContent({ onMenuClick }: HeaderProps) {
     }
     return false;
   });
+
   const [categories, setCategories] = useState<CategoryNode[]>([]);
-  const [siteRootId, setSiteRootId] = useState<string | null>(null);
-  const [salesRootId, setSalesRootId] = useState<string | null>(null);
+  const [rootCategories, setRootCategories] = useState<CategoryNode[]>([]);
   const [activeRootId, setActiveRootId] = useState<string | null>(null);
 
   const pathname = usePathname() || "";
   const searchParams = useSearchParams();
-  const tabParam = searchParams.get("tab"); // 👈 URL မှ ?tab= ကို ဖတ်ရန်
+  const tabParam = searchParams.get("tab");
 
   const isHomePage = pathname === "/";
-  const isArticlePage = pathname.includes("/articles/"); // 👈 Article Page ဟုတ်မဟုတ် စစ်ရန်
+  const isArticlePage = pathname.includes("/articles/");
   const idMatch = pathname.match(/\/category\/([^\/]+)/);
   const currentCategoryId = idMatch ? idMatch[1] : null;
 
-  // 🌟 Scroll Event ကို နားထောင်မည့် useEffect အသစ်
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 10);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -80,20 +73,7 @@ function HeaderContent({ onMenuClick }: HeaderProps) {
             : [];
 
         setCategories(rawData);
-
-        const siteData = rawData.find(
-          (c) =>
-            c.category_slug?.toLowerCase() === "genbakanri" ||
-            c.category_name === "現場管理"
-        );
-        if (siteData) setSiteRootId(siteData.id);
-
-        const salesData = rawData.find(
-          (c) =>
-            c.category_slug?.toLowerCase() === "hanbaikanri" ||
-            c.category_name === "販売管理"
-        );
-        if (salesData) setSalesRootId(salesData.id);
+        setRootCategories(rawData);
       })
       .catch((err) => console.error("Error fetching header categories:", err));
   }, []);
@@ -117,20 +97,12 @@ function HeaderContent({ onMenuClick }: HeaderProps) {
     }
   }, [currentCategoryId, categories, isHomePage]);
 
-  // 🌟 Article Page ဖြစ်ပါက URL query ပေါ်မူတည်၍ Active Tab ကို သတ်မှတ်ပါမည်
-  const isSiteActive =
-    isArticlePage && tabParam
-      ? tabParam === "site"
-      : siteRootId
-      ? pathname.includes(siteRootId) || activeRootId === siteRootId
-      : false;
-
-  const isSalesActive =
-    isArticlePage && tabParam
-      ? tabParam === "sales"
-      : salesRootId
-      ? pathname.includes(salesRootId) || activeRootId === salesRootId
-      : false;
+  const checkIsActive = (rootCat: CategoryNode) => {
+    if (isArticlePage && tabParam) {
+      return tabParam === rootCat.category_slug;
+    }
+    return pathname.includes(rootCat.id) || activeRootId === rootCat.id;
+  };
 
   const toggleTheme = () => {
     if (isDarkMode) {
@@ -165,35 +137,26 @@ function HeaderContent({ onMenuClick }: HeaderProps) {
               style={{ cursor: "pointer" }}
             />
           </Link>
-          <span className={styles.logoText}>建工管理</span>
+          <Link href="/">
+            <span className={styles.logoText}>建工管理</span>
+          </Link>
         </div>
 
         <div className={styles.navContainer}>
-          {siteRootId ? (
-            <Link
-              href={`/category/${siteRootId}`}
-              className={`${styles.navButton} ${
-                isSiteActive ? styles.active : ""
-              }`}
-            >
-              現場管理
-            </Link>
-          ) : (
-            <button className={styles.navButton}>現場管理</button>
-          )}
-
-          {salesRootId ? (
-            <Link
-              href={`/category/${salesRootId}`}
-              className={`${styles.navButton} ${
-                isSalesActive ? styles.active : ""
-              }`}
-            >
-              販売管理
-            </Link>
-          ) : (
-            <button className={styles.navButton}>販売管理</button>
-          )}
+          {rootCategories.map((rootCat) => {
+            const isActive = checkIsActive(rootCat);
+            return (
+              <Link
+                key={rootCat.id}
+                href={`/category/${rootCat.id}`}
+                className={`${styles.navButton} ${
+                  isActive ? styles.active : ""
+                }`}
+              >
+                {rootCat.category_name}
+              </Link>
+            );
+          })}
         </div>
 
         <button
@@ -210,7 +173,6 @@ function HeaderContent({ onMenuClick }: HeaderProps) {
   );
 }
 
-// ⚠️ Next.js Client Component တွင် useSearchParams အသုံးပြုရန် Suspense ဖြင့် ဝန်းရံပေးရပါသည်
 export default function Header(props: HeaderProps) {
   return (
     <Suspense

@@ -101,28 +101,32 @@ export default function SearchResultsPage() {
       });
     }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setFilteredArticles(results);
-    // Reset to page 1 whenever the search query or category filter changes
     setCurrentPage(1);
   }, [searchQuery, targetCategoryId, allArticles]);
 
   useEffect(() => {
     let activeCategoryId = targetCategoryId;
     if (!activeCategoryId && filteredArticles.length > 0) {
-      const firstCatId = filteredArticles[0].category_id;
-      const allShareSameCategory = filteredArticles.every(
-        (a) => a.category_id === firstCatId
-      );
-
-      if (allShareSameCategory && firstCatId) {
-        activeCategoryId = firstCatId;
-      }
+      activeCategoryId = filteredArticles[0].category_id || "";
     }
 
     if (activeCategoryId && categories.length > 0) {
       const path = findCategoryPath(categories, activeCategoryId);
-      if (path) {
+      if (path && path.length > 0) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setBreadcrumbTrail(path);
+
+        const rootId = path[0].id;
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("lastActiveTab", rootId);
+          window.dispatchEvent(
+            new CustomEvent("updateActiveCategory", {
+              detail: { rootId },
+            })
+          );
+        }
       } else {
         setBreadcrumbTrail([]);
       }
@@ -263,7 +267,6 @@ export default function SearchResultsPage() {
                       (page >= currentPage - 1 && page <= currentPage + 1)
                   )
                   .map((page, index, array) => {
-                    // Inject ellipsis (...) if there's a gap in the page numbers
                     if (index > 0 && page !== array[index - 1] + 1) {
                       return (
                         <React.Fragment key={`ellipsis-${page}`}>

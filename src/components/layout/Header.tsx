@@ -53,10 +53,23 @@ function HeaderContent({ onMenuClick }: HeaderProps) {
   const currentCategoryId = idMatch ? idMatch[1] : null;
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handleCategoryUpdate = (e: any) => {
+      if (window.location.pathname === "/") return;
+      const rootId = e.detail?.rootId;
+      if (rootId) {
+        setActiveRootId(rootId);
+      }
+    };
+    window.addEventListener("updateActiveCategory", handleCategoryUpdate);
+    return () =>
+      window.removeEventListener("updateActiveCategory", handleCategoryUpdate);
+  }, []);
+
+  useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -71,7 +84,6 @@ function HeaderContent({ onMenuClick }: HeaderProps) {
             : Array.isArray(response)
             ? response
             : [];
-
         setCategories(rawData);
         setRootCategories(rawData);
       })
@@ -79,31 +91,35 @@ function HeaderContent({ onMenuClick }: HeaderProps) {
   }, []);
 
   useEffect(() => {
+    if (isHomePage) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setActiveRootId(null);
+      return;
+    }
+
     if (currentCategoryId && categories.length > 0) {
       const path = findCategoryPath(categories, currentCategoryId);
       if (path && path.length > 0) {
         const rootId = path[0].id;
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setActiveRootId(rootId);
         sessionStorage.setItem("lastActiveTab", rootId);
       }
     } else {
       const savedRootId = sessionStorage.getItem("lastActiveTab");
-      if (savedRootId && !isHomePage) {
+      if (savedRootId) {
         setActiveRootId(savedRootId);
-      } else {
-        setActiveRootId(null);
       }
     }
   }, [currentCategoryId, categories, isHomePage]);
 
   const checkIsActive = (rootCat: CategoryNode) => {
+    if (isHomePage) return false;
+
     if (isArticlePage && tabParam) {
       return tabParam === rootCat.category_slug;
     }
     const isPathMatch = pathname.includes(rootCat.id);
     const isSessionMatch = activeRootId === rootCat.id;
-
     return isPathMatch || isSessionMatch;
   };
 
@@ -161,7 +177,6 @@ function HeaderContent({ onMenuClick }: HeaderProps) {
             );
           })}
         </div>
-
         <button
           className={styles.iconButton}
           onClick={toggleTheme}
@@ -170,7 +185,6 @@ function HeaderContent({ onMenuClick }: HeaderProps) {
           {isDarkMode ? <Moon size={20} /> : <Sun size={20} />}
         </button>
       </div>
-
       {!isHomePage && <SearchBox />}
     </header>
   );

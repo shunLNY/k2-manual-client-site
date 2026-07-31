@@ -102,6 +102,20 @@ function SidebarContent({ isOpen, onClose }: SidebarProps) {
   const [activeRootId, setActiveRootId] = useState<string | null>(null);
 
   useEffect(() => {
+    const handleCategoryUpdate = (e: any) => {
+      if (window.location.pathname === "/") return;
+      const rootId = e.detail?.rootId;
+      if (rootId) {
+        setActiveRootId(rootId);
+        setOpenStates((prev) => ({ ...prev, [rootId]: true }));
+      }
+    };
+    window.addEventListener("updateActiveCategory", handleCategoryUpdate);
+    return () =>
+      window.removeEventListener("updateActiveCategory", handleCategoryUpdate);
+  }, []);
+
+  useEffect(() => {
     fetch("http://localhost:4000/categories")
       .then((res) => res.json())
       .then((response) => {
@@ -111,7 +125,6 @@ function SidebarContent({ isOpen, onClose }: SidebarProps) {
             : Array.isArray(response)
             ? response
             : [];
-
         const sortedData = rawData.sort(
           (a, b) => (a.sort_order || 0) - (b.sort_order || 0)
         );
@@ -128,8 +141,10 @@ function SidebarContent({ isOpen, onClose }: SidebarProps) {
     if (loading || rootCategories.length === 0) return;
 
     const isHomePage = pathname === "/";
+
     if (isHomePage) {
       setActiveRootId(null);
+      setOpenStates({});
       return;
     }
 
@@ -146,9 +161,7 @@ function SidebarContent({ isOpen, onClose }: SidebarProps) {
           ? c.category_slug.toLowerCase() === tabParam.toLowerCase()
           : false
       );
-      if (matchedRoot) {
-        newActiveRootId = matchedRoot.id;
-      }
+      if (matchedRoot) newActiveRootId = matchedRoot.id;
     }
 
     if (!newActiveRootId) {
@@ -169,16 +182,14 @@ function SidebarContent({ isOpen, onClose }: SidebarProps) {
       const matchedBySession = rootCategories.find(
         (c) => c.id === savedSessionId
       );
-      if (matchedBySession) {
-        newActiveRootId = matchedBySession.id;
-      }
+      if (matchedBySession) newActiveRootId = matchedBySession.id;
     }
 
     if (newActiveRootId) {
       newOpenStates[newActiveRootId] = true;
     }
 
-    setActiveRootId(newActiveRootId);
+    if (newActiveRootId) setActiveRootId(newActiveRootId);
     setOpenStates((prev) => ({ ...prev, ...newOpenStates }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname, tabParam, rootCategories, loading]);
@@ -224,7 +235,6 @@ function SidebarContent({ isOpen, onClose }: SidebarProps) {
       <div className={styles.sidebarContent}>
         {rootCategories.map((rootCat) => {
           if (activeRootId !== null && activeRootId !== rootCat.id) return null;
-
           const isFolderOpen = !!openStates[rootCat.id];
           const children = rootCat.children
             ? [...rootCat.children].sort(
@@ -259,7 +269,6 @@ function SidebarContent({ isOpen, onClose }: SidebarProps) {
                   />
                 </div>
               </div>
-
               {isFolderOpen && (
                 <ul className={styles.rootChildren}>
                   {children.length > 0 ? (

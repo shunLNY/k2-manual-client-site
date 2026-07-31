@@ -32,6 +32,7 @@ export type MainCategory = {
   parent_order: number;
   status: string;
   children?: SubCategory[];
+  sort_order?: number;
 };
 
 export type ArticleCategory = {

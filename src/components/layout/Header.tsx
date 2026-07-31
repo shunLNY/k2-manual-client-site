@@ -101,7 +101,10 @@ function HeaderContent({ onMenuClick }: HeaderProps) {
     if (isArticlePage && tabParam) {
       return tabParam === rootCat.category_slug;
     }
-    return pathname.includes(rootCat.id) || activeRootId === rootCat.id;
+    const isPathMatch = pathname.includes(rootCat.id);
+    const isSessionMatch = activeRootId === rootCat.id;
+
+    return isPathMatch || isSessionMatch;
   };
 
   const toggleTheme = () => {

@@ -36,27 +36,22 @@ export default function TopicCard({ topic }: TopicCardProps) {
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const getRootCategoryName = (category: any): string => {
+  const getRootCategorySlug = (category: any): string => {
     if (!category) return "";
     if (category.parentCategory) {
-      return getRootCategoryName(category.parentCategory);
+      return getRootCategorySlug(category.parentCategory);
     }
-    return category.category_name || "";
+    return category.category_slug || "";
   };
 
   const fullCategoryPath = topic.category
     ? getCategoryPath(topic.category)
     : topic.category_name || "";
 
-  const rootCategoryName = topic.category
-    ? getRootCategoryName(topic.category)
+  const rootCategorySlug = topic.category
+    ? getRootCategorySlug(topic.category)
     : "";
-  let tabQuery = "";
-  if (rootCategoryName === "現場管理") {
-    tabQuery = "?tab=site";
-  } else if (rootCategoryName === "販売管理") {
-    tabQuery = "?tab=sales";
-  }
+  const tabQuery = rootCategorySlug ? `?tab=${rootCategorySlug}` : "";
 
   return (
     <Link href={`/articles/${topic.id}${tabQuery}`} className={styles.card}>

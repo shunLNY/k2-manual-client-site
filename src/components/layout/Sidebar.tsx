@@ -127,32 +127,55 @@ function SidebarContent({ isOpen, onClose }: SidebarProps) {
   useEffect(() => {
     if (loading || rootCategories.length === 0) return;
 
-    const segments = pathname.split("/");
-    const currentId = segments[segments.length - 1];
+    const isHomePage = pathname === "/";
+    if (isHomePage) {
+      setActiveRootId(null);
+      return;
+    }
 
     let newActiveRootId: string | null = null;
-    // eslint-disable-next-line prefer-const
-    let newOpenStates = { ...openStates };
+    const newOpenStates = { ...openStates };
+    const savedSessionId =
+      typeof window !== "undefined"
+        ? sessionStorage.getItem("lastActiveTab")
+        : null;
 
     if (pathname.includes("/articles/") && tabParam) {
-      const matchedRoot = rootCategories.find(
-        (c) => c.category_slug === tabParam
+      const matchedRoot = rootCategories.find((c) =>
+        c.category_slug
+          ? c.category_slug.toLowerCase() === tabParam.toLowerCase()
+          : false
       );
       if (matchedRoot) {
         newActiveRootId = matchedRoot.id;
-        newOpenStates[matchedRoot.id] = true;
       }
-    } else if (currentId) {
+    }
+
+    if (!newActiveRootId) {
+      const currentId = pathname.split("/").pop() || "";
       for (const root of rootCategories) {
         if (
+          pathname.includes(root.id) ||
           currentId === root.id ||
           (root.children && isIdInTree(currentId, root.children))
         ) {
           newActiveRootId = root.id;
-          newOpenStates[root.id] = true;
           break;
         }
       }
+    }
+
+    if (!newActiveRootId && savedSessionId) {
+      const matchedBySession = rootCategories.find(
+        (c) => c.id === savedSessionId
+      );
+      if (matchedBySession) {
+        newActiveRootId = matchedBySession.id;
+      }
+    }
+
+    if (newActiveRootId) {
+      newOpenStates[newActiveRootId] = true;
     }
 
     setActiveRootId(newActiveRootId);
@@ -219,7 +242,6 @@ function SidebarContent({ isOpen, onClose }: SidebarProps) {
                 <span className={styles.rootTitle}>
                   <Link
                     href={`/category/${rootCat.id}`}
-                    onClick={(e) => e.stopPropagation()}
                     style={{ textDecoration: "none", color: "inherit" }}
                   >
                     {rootCat.category_name}

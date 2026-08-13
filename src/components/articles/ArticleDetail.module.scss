@@ -7,26 +7,49 @@
 .container {
   padding: 0 fn.rem(40) 0;
   @include mixin.sm() {
-    padding: fn.rem(24) fn.rem(20);
+    padding: 0;
   }
 }
 
 .bgcolor {
   background: var(--secondary);
   padding: fn.rem(50) fn.rem(40) fn.rem(50);
+  border-bottom-left-radius: fn.rem(8);
+  border-bottom-right-radius: fn.rem(8);
+  box-shadow: var(--shadow-2xs);
+  @include mixin.sm() {
+    padding: fn.rem(20);
+  }
 }
 
 /* 1. Breadcrumb */
 .breadcrumb {
-  font-size: fn.rem(14);
+  padding-top: fn.rem(45);
   color: var(--sidebar-primary-background);
-  margin-bottom: fn.rem(32);
+  font-size: fn.rem(13);
+  margin-bottom: fn.rem(10);
   display: flex;
   flex-wrap: wrap;
   gap: fn.rem(8);
+  align-items: center;
 
   span {
     color: var(--sidebar-primary-background);
+  }
+
+  .link {
+    color: var(--primary);
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .current {
+    color: var(--foreground);
   }
 }
 
@@ -38,19 +61,56 @@
   margin-bottom: fn.rem(24);
 
   @include mixin.sm() {
-    font-size: fn.rem(24);
+    font-size: fn.rem(18);
   }
 }
 
-/* 3. Hero Image */
+/* 3. Related Articles */
+.relatedArticlesSection {
+  margin-bottom: fn.rem(32);
+}
+
+.relatedTitle {
+  font-size: fn.rem(16);
+  font-weight: bold;
+  color: var(--foreground);
+  margin: fn.rem(15) 0;
+}
+
+.relatedList {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: fn.rem(8);
+}
+
+.relatedItem {
+  font-size: fn.rem(14);
+}
+
+.relatedLink {
+  color: var(--primary);
+  text-decoration: none;
+  transition: color 0.2s;
+
+  &:hover {
+    text-decoration: underline;
+    color: #1d4ed8;
+  }
+}
+
+/* 4. Hero Image */
 .heroImageWrapper {
   position: relative;
   width: 100%;
   height: fn.rem(300);
-  border-radius: fn.rem(8);
 
   img {
     object-fit: cover;
+    border-top-left-radius: fn.rem(8);
+    border-top-right-radius: fn.rem(8);
   }
 
   @include mixin.sm() {
@@ -58,6 +118,7 @@
   }
 }
 
+/* 5. Summary Section */
 .summarySection {
   display: flex;
   gap: fn.rem(48);
@@ -109,6 +170,7 @@
   width: 100%;
 }
 
+/* 6. Summernote Content */
 .summernoteContent {
   color: var(--foreground);
 
@@ -137,7 +199,7 @@
     height: auto;
     border-radius: fn.rem(4);
     margin: fn.rem(24) 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-2xs);
   }
 
   ul,

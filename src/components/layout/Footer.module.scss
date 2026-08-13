@@ -12,6 +12,10 @@
   flex-direction: column;
   min-height: fn.rem(350);
   font-family: var(--font-sans, sans-serif);
+
+  @include mixin.sm() {
+    padding: fn.rem(20);
+  }
 }
 
 .logoContainer {

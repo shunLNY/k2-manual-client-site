@@ -9,19 +9,29 @@
 /* Header Styles                               */
 /* ------------------------------------------- */
 
-.header {
+.headerWrapper {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: #ffffff;
+  transition: box-shadow 0.3s ease;
+}
+
+:global(.dark) .headerWrapper {
+  background-color: #1a1a1a;
+}
+
+.topBar {
   display: flex;
   align-items: center;
   padding: fn.rem(16) fn.rem(24);
-  background-color: var(--header-background);
-  border-bottom: 1px solid var(--header-border);
   gap: fn.rem(32);
-  font-family: var(--font-sans, sans-serif);
 
   @include mixin.sm() {
     padding: fn.rem(16) fn.rem(20);
     gap: fn.rem(16);
     justify-content: flex-start;
+    flex-wrap: wrap; // Allows the tabs container to drop to the next line
   }
 }
 
@@ -38,9 +48,9 @@
   cursor: pointer;
   margin-left: auto;
 
-  @include mixin.sm() {
-    display: none;
-  }
+  // @include mixin.sm() {
+  //   display: none;
+  // }
 }
 
 .logoContainer {
@@ -68,26 +78,75 @@
 
 .navContainer {
   display: flex;
-  gap: fn.rem(12);
+  align-items: flex-end;
+  gap: fn.rem(8);
   margin-left: fn.rem(96);
+  margin-bottom: fn.rem(-48);
 
   @include mixin.sm() {
-    margin-left: auto;
+    margin-left: 0;
+    margin-bottom: 0;
+    width: 100%; // Force full width for new line
+    padding-top: fn.rem(16);
+    padding-bottom: fn.rem(8);
+    border-top: 1px solid rgba(200, 200, 200, 0.2); // Separator line for mobile
+
+    // Horizontal scrolling setup
+    overflow-x: auto;
+    align-items: center;
+    gap: fn.rem(12);
+
+    // Hide scrollbar for a cleaner look
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+    &::-webkit-scrollbar {
+      display: none; /* Chrome, Safari and Opera */
+    }
   }
 }
 
 .navButton {
-  background-color: var(--primary);
-  color: var(--primary-foreground);
+  width: fn.rem(100);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: none;
-  border-radius: fn.rem(4);
-  padding: fn.rem(8) fn.rem(16);
+  border-radius: fn.rem(12) fn.rem(12) 0 0;
+  padding: fn.rem(5) fn.rem(16);
   font-size: fn.rem(14);
+  font-weight: bold;
+  text-decoration: none;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease-in-out;
+  background-color: var(--header-border);
+  color: var(--foreground);
 
-  &:hover {
-    background-color: var(--sidebar-ring, #2563eb);
+  &:hover:not(.active) {
+    background-color: #e2e4eb;
+  }
+
+  &.active {
+    background-color: var(--tabbar-background);
+    color: #ffffff;
+  }
+
+  @include mixin.sm() {
+    width: auto;
+    flex-shrink: 0;
+    border-radius: fn.rem(50);
+    padding: fn.rem(6) fn.rem(16);
+    background-color: #e2e4eb;
+    color: #1a1a1a;
+
+    // Adjust mobile colors for dark mode if necessary
+    :global(.dark) & {
+      background-color: #333333;
+      color: #ffffff;
+
+      &.active {
+        background-color: #555555;
+      }
+    }
   }
 }
 
@@ -105,7 +164,7 @@
 }
 
 /* ------------------------------------------- */
-/* Sidebar and Overlay                   */
+/* Sidebar and Overlay                         */
 /* ------------------------------------------- */
 
 .sidebar {
@@ -119,7 +178,7 @@
   transition: left 0.3s ease-in-out;
   z-index: 1000;
   padding: fn.rem(24);
-  box-shadow: fn.rem(4) 0 fn.rem(10) rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-2xs);
 
   &.sidebarOpen {
     left: 0;

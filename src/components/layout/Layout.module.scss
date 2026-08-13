@@ -15,7 +15,6 @@
 
 .mainContent {
   flex: 1;
-  padding: fn.rem(50) 0 fn.rem(60);
   background-color: var(--background);
 
   @include mixin.sm() {

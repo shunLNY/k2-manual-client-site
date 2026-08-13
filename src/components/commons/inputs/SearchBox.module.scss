@@ -1,0 +1,322 @@
+/** @format */
+@use "../../../styles/functions" as fn;
+@use "../../../styles/mixins" as mixin;
+
+/* --- Search Overlay --- */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9998;
+  cursor: pointer;
+}
+
+.searchSection {
+  background-color: var(--sidebar-border);
+  padding: fn.rem(16) fn.rem(24);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 10; /* Lower default z-index so sidebar can cover it */
+
+  /* Elevate ONLY when the search overlay is open */
+  &.activeSearch {
+    z-index: 9999;
+  }
+
+  @include mixin.sm() {
+    padding: fn.rem(12) fn.rem(20);
+  }
+
+  &.transparentBg {
+    background-color: transparent !important;
+    padding-top: fn.rem(20);
+    margin-bottom: fn.rem(20);
+  }
+}
+
+.searchInputWrapper {
+  display: flex;
+  align-items: center;
+  background-color: var(--header-background);
+  border-radius: fn.rem(999);
+  padding: fn.rem(11) fn.rem(16);
+  width: 100%;
+  max-width: fn.rem(428);
+  gap: fn.rem(8);
+  box-shadow: var(--shadow-2xs);
+
+  &.transparentBg {
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: var(--shadow-sm) !important;
+
+    .searchIcon {
+      color: #718096 !important;
+    }
+
+    .searchInput {
+      color: #1a1a1a !important;
+      &::placeholder {
+        color: #a0aec0 !important;
+      }
+    }
+  }
+}
+
+.searchInput {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: fn.rem(14);
+  color: var(--foreground);
+  font-family: var(--font-sans, sans-serif);
+
+  &::placeholder {
+    // color: #8a8d9f;
+  }
+}
+
+/* --- Dropdown Layout Container --- */
+.dropdownWrapper {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  padding: 0 fn.rem(24);
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+
+  @include mixin.sm() {
+    padding: fn.rem(8) fn.rem(16);
+  }
+}
+
+.dropdownContainer {
+  background-color: var(--background);
+  color: var(--sidebar-color);
+  border-radius: fn.rem(8);
+  box-shadow: var(--shadow-2xs);
+  width: 100%;
+  max-width: fn.rem(1200);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+
+  @include mixin.sm() {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* --- Mobile Tabs Styles --- */
+.mobileTabs {
+  display: none;
+
+  @include mixin.sm() {
+    display: flex;
+    width: 100%;
+  }
+}
+
+.tabButton {
+  flex: 1;
+  padding: fn.rem(12) fn.rem(16);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: fn.rem(14);
+  font-weight: 600;
+  color: var(--foreground);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+
+  &.activeTab {
+    color: var(--primary, #0056b3);
+    border-bottom-color: var(--primary, #0056b3);
+  }
+}
+
+.hideOnMobile {
+  @include mixin.sm() {
+    display: none !important;
+  }
+}
+
+/* --- Columns --- */
+.columnSection {
+  padding: fn.rem(24);
+  display: flex;
+  flex-direction: column;
+
+  &:first-child {
+    border-right: 1px solid #eef0f5;
+
+    @include mixin.sm() {
+      border-right: none;
+    }
+  }
+
+  @include mixin.sm() {
+    padding: fn.rem(16);
+    max-height: 55vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+.columnHeader {
+  font-size: fn.rem(12);
+  // color: #8a8d9f;
+  font-weight: 500;
+  margin: 0 0 fn.rem(8) 0;
+
+  @include mixin.sm() {
+    display: none; /* Optional: Hide column header on mobile since the tab acts as the header */
+  }
+}
+
+.resultCount {
+  font-size: fn.rem(14);
+  // color: #1a1a1a;
+  margin: 0 0 fn.rem(16) 0;
+
+  strong {
+    font-weight: 700;
+  }
+}
+
+.listContainer {
+  display: flex;
+  flex-direction: column;
+  gap: fn.rem(12);
+  // max-height: fn.rem(400);
+}
+
+/* --- Categories List Styles --- */
+.categoryItem {
+  font-size: fn.rem(13);
+  // color: #242533;
+  padding: fn.rem(12) 0;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--primary, #0056b3);
+  }
+}
+
+/* --- Articles Card Styles --- */
+.articleHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.viewAllBtn {
+  background: none;
+  border: none;
+  color: var(--sidebar-color);
+  font-size: fn.rem(14);
+  font-weight: bold;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+
+  &:hover {
+    color: #555;
+  }
+}
+
+.articleCard {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  background-color: var(--header-background);
+  border-radius: fn.rem(6);
+  cursor: pointer;
+  text-decoration: none;
+  overflow: hidden;
+  padding: 0;
+  gap: 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-2xs);
+  }
+}
+
+.thumbnailWrapper {
+  position: relative;
+  width: fn.rem(140);
+  min-height: fn.rem(130);
+  flex-shrink: 0;
+}
+
+.thumbnail {
+  object-fit: cover;
+}
+
+.articleContent {
+  display: flex;
+  flex-direction: column;
+  gap: fn.rem(6);
+  padding: fn.rem(16);
+  min-width: 0;
+  flex-grow: 1;
+  justify-content: center;
+}
+
+.articleBreadcrumb {
+  font-size: fn.rem(10);
+  // color: #333333;
+  margin-bottom: fn.rem(2);
+}
+
+.articleTitle {
+  font-size: fn.rem(14);
+  font-weight: bold;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  overflow: hidden;
+}
+
+.articleExcerpt {
+  font-size: fn.rem(12);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.5;
+}
+
+.articleDate {
+  font-size: fn.rem(10);
+  // color: #71768b;
+  margin-top: fn.rem(4);
+}
+
+/* --- Search Utilities --- */
+.highlight {
+  font-weight: bold;
+  color: var(--primary, #0056b3);
+}
+
+.noResultsText {
+  font-size: fn.rem(13);
+  // color: #8a8d9f;
+  margin: 0;
+}

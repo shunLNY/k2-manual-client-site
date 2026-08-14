@@ -20,7 +20,6 @@ export default function CategoryPage() {
   const [targetCategory, setTargetCategory] = useState<DBCategoryNode | null>(
     null
   );
-  const [parentName, setParentName] = useState<string>("");
   // isRootLevel state is removed since we no longer need to hide root categories
   const [loading, setLoading] = useState(true);
 
@@ -52,18 +51,6 @@ export default function CategoryPage() {
         if (foundData) {
           setTargetCategory(foundData);
 
-          // Find Parent Name if this is a subcategory
-          if (foundData.parent_category_id !== null) {
-            const rootNode = rawData.find(
-              (root) =>
-                root.id === foundData.parent_category_id ||
-                root.children?.some((child) => child.id === foundData.id)
-            );
-            if (rootNode) setParentName(rootNode.category_name);
-          } else {
-            // If it is a root category (Main Tab), parentName remains empty
-            setParentName("");
-          }
         }
         setLoading(false);
       })
@@ -97,9 +84,7 @@ export default function CategoryPage() {
   return (
     <CategoryDetail
       targetCategory={targetCategory}
-      parentName={parentName}
       formattedDate={formattedDate}
     />
   );
 }
-

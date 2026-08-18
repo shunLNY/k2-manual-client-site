@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import styles from "../../components/categories/CategoryDetail.module.scss";
 import CategoryDetail from "@/components/categories/CategoryDetail";
+import { apiUrl } from "@/utils/api";
 
 interface DBCategoryNode {
   id: string;
@@ -41,7 +42,7 @@ export default function CategoryPage() {
   useEffect(() => {
     if (!id) return;
 
-    fetch("http://localhost:4000/categories")
+    fetch(apiUrl("/categories"))
       .then((res) => res.json())
       .then((response) => {
         const rawData: DBCategoryNode[] =

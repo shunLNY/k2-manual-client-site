@@ -8,6 +8,7 @@ import styles from "./Sidebar.module.scss";
 import Link from "next/link";
 import { MainCategory } from "../../utils/types";
 import { Folder, ChevronRight, Circle, ChevronLeft, X } from "lucide-react";
+import { apiUrl } from "@/utils/api";
 
 interface SidebarProps {
   isOpen?: boolean;
@@ -116,7 +117,7 @@ function SidebarContent({ isOpen, onClose }: SidebarProps) {
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:4000/categories")
+    fetch(apiUrl("/categories"))
       .then((res) => res.json())
       .then((response) => {
         const rawData: MainCategory[] =

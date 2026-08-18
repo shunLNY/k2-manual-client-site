@@ -4,12 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import styles from "../styles/SearchPage.module.scss";
 import { DBCategoryNode, Article } from "../utils/types";
-
-const getImageUrl = (path?: string) => {
-  if (!path) return "/placeholder-image.jpg";
-  if (path.startsWith("http")) return path;
-  return path.startsWith("/") ? path : `/${path}`;
-};
+import { apiUrl, getImageUrl } from "@/utils/api";
 
 const findCategoryPath = (
   nodes: DBCategoryNode[],
@@ -59,8 +54,8 @@ export default function SearchResultsPage() {
     const fetchData = async () => {
       try {
         const [articlesRes, categoriesRes] = await Promise.all([
-          fetch(`http://localhost:4000/articles`),
-          fetch(`http://localhost:4000/categories`),
+          fetch(apiUrl("/articles")),
+          fetch(apiUrl("/categories")),
         ]);
 
         if (articlesRes.ok) {

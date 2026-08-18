@@ -9,6 +9,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { CategoryNode } from "../../utils/types";
 import SearchBox from "../commons/inputs/SearchBox";
 import { Menu, Moon, Sun } from "lucide-react";
+import { apiUrl } from "@/utils/api";
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -75,7 +76,7 @@ function HeaderContent({ onMenuClick }: HeaderProps) {
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:4000/categories")
+    fetch(apiUrl("/categories"))
       .then((res) => res.json())
       .then((response) => {
         const rawData: CategoryNode[] =

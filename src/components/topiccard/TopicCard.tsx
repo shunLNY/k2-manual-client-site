@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import styles from "./TopicCard.module.css";
 import { Article } from "../../utils/types";
+import { getImageUrl } from "@/utils/api";
 
 interface TopicCardProps {
   topic: Article;
@@ -10,14 +11,8 @@ interface TopicCardProps {
 
 export default function TopicCard({ topic }: TopicCardProps) {
   console.log("Updated Category:", topic.category);
-  const API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
   const rawPath = topic.thumbnail_path;
-  const initialImageUrl = rawPath
-    ? rawPath.startsWith("http")
-      ? rawPath
-      : `${API_BASE_URL}${rawPath}`
-    : "/images/card.png";
+  const initialImageUrl = getImageUrl(rawPath, "/images/card.png");
 
   const [imgSrc, setImgSrc] = useState(initialImageUrl);
   const fallbackImage =

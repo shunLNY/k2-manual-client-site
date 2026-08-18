@@ -5,12 +5,13 @@ import TopicCard from "../components/topiccard/TopicCard";
 import styles from "../styles/Home.module.scss";
 import { Article } from "@/utils/types";
 import SearchBox from "@/components/commons/inputs/SearchBox";
+import { apiUrl } from "@/utils/api";
 
 export default function Home() {
   const [articles, setArticles] = useState<Article[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:4000/articles")
+    fetch(apiUrl("/articles"))
       .then((res) => res.json())
       .then((response) => {
         if (Array.isArray(response)) {

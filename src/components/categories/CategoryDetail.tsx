@@ -3,12 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import styles from "./CategoryDetail.module.scss";
 import { DBCategoryNode, Article } from "../../utils/types";
-
-const getImageUrl = (path?: string) => {
-  if (!path) return "/placeholder-image.jpg";
-  if (path.startsWith("http")) return path;
-  return path.startsWith("/") ? path : `/${path}`;
-};
+import { apiUrl, getImageUrl } from "@/utils/api";
 
 const findCategoryPath = (
   nodes: DBCategoryNode[],
@@ -47,8 +42,8 @@ export default function CategoryDetail({
     const fetchData = async () => {
       try {
         const [articlesRes, categoriesRes] = await Promise.all([
-          fetch(`http://localhost:4000/articles`),
-          fetch(`http://localhost:4000/categories`),
+          fetch(apiUrl("/articles")),
+          fetch(apiUrl("/categories")),
         ]);
 
         if (articlesRes.ok) {

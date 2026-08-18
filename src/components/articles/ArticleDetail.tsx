@@ -4,6 +4,7 @@ import styles from "./ArticleDetail.module.scss";
 import defaultHeroImage from "../../../public/images/unsplash.png";
 import { ArticleDetailProps } from "../../utils/types";
 import Link from "next/link";
+import { apiUrl, getImageUrl } from "@/utils/api";
 
 export default function ArticleDetail({ article }: ArticleDetailProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -16,7 +17,7 @@ export default function ArticleDetail({ article }: ArticleDetailProps) {
       const fetchRelatedArticles = async () => {
         try {
           const response = await fetch(
-            `http://localhost:4000/articles?category_id=${categoryId}`
+            apiUrl(`/articles?category_id=${categoryId}`)
           );
 
           if (response.ok) {
@@ -89,7 +90,7 @@ export default function ArticleDetail({ article }: ArticleDetailProps) {
         <Image
           src={
             article.thumbnail_path
-              ? `http://localhost:4000${article.thumbnail_path}`
+              ? getImageUrl(article.thumbnail_path)
               : defaultHeroImage
           }
           alt={article.title}

@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import ArticleDetail from "../../components/articles/ArticleDetail";
 import { Article } from "../../utils/types";
+import { apiUrl } from "@/utils/api";
 export default function ArticlePage() {
   const router = useRouter();
   const { id } = router.query;
@@ -19,7 +20,7 @@ export default function ArticlePage() {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`http://localhost:4000/articles/${id}`);
+        const response = await fetch(apiUrl(`/articles/${id}`));
 
         if (!response.ok) {
           if (response.status === 404) {

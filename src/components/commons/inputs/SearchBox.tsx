@@ -7,6 +7,7 @@ import Image from "next/image";
 import { Search } from "lucide-react";
 import styles from "./SearchBox.module.scss";
 import { CategoryNode, Article } from "../../../utils/types";
+import { apiUrl, getImageUrl } from "@/utils/api";
 
 export default function SearchBox() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -57,7 +58,7 @@ export default function SearchBox() {
   useEffect(() => {
     const fetchExistingData = async () => {
       try {
-        const catRes = await fetch("http://localhost:4000/categories");
+        const catRes = await fetch(apiUrl("/categories"));
         const catResponse = await catRes.json();
         const rawCategories = catResponse?.data
           ? catResponse.data
@@ -66,7 +67,7 @@ export default function SearchBox() {
           : [];
         setCategories(flattenCategories(rawCategories));
 
-        const artRes = await fetch("http://localhost:4000/articles");
+        const artRes = await fetch(apiUrl("/articles"));
         const artResponse = await artRes.json();
         const rawArticles: Article[] = artResponse?.data
           ? artResponse.data
@@ -340,7 +341,10 @@ export default function SearchBox() {
                           <div className={styles.thumbnailWrapper}>
                             <Image
                               src={
-                                art.thumbnail_path || "/images/placeholder.jpg"
+                                getImageUrl(
+                                  art.thumbnail_path,
+                                  "/images/placeholder.jpg"
+                                )
                               }
                               alt={art.title}
                               fill

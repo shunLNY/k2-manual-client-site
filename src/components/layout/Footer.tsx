@@ -6,12 +6,13 @@ import Image from "next/image";
 import logo from "../../../public/images/footerlogo.png";
 import Link from "next/link";
 import { CategoryNode } from "../../utils/types";
+import { apiUrl } from "@/utils/api";
 
 export default function Footer() {
   const [parentCategories, setParentCategories] = useState<CategoryNode[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:4000/categories")
+    fetch(apiUrl("/categories"))
       .then((res) => res.json())
       .then((response) => {
         const rawData: CategoryNode[] = response && response.data ? response.data : (Array.isArray(response) ? response : []);
